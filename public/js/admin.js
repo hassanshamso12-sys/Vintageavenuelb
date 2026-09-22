@@ -116,28 +116,38 @@ document.addEventListener('DOMContentLoaded', () => {
   // Live Site Branding & Custom Logo Loader for Admin
   async function loadSiteBranding() {
     try {
-      const res = await fetch('/api/settings');
-      const data = await res.json();
-      if (res.ok && data.settings) {
-        const s = data.settings;
-        if (s.theme_palette) {
-          document.body.classList.remove('theme-emerald', 'theme-sapphire', 'theme-rose');
-          if (s.theme_palette !== 'gold') {
-            document.body.classList.add(`theme-${s.theme_palette}`);
+      let s = JSON.parse(localStorage.getItem('va_settings') || '{}');
+
+      try {
+        const res = await fetch('/api/settings');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.settings) {
+            s = { ...s, ...data.settings };
+            localStorage.setItem('va_settings', JSON.stringify(s));
           }
         }
+      } catch (e) {
+        // ignore fetch failure on static hosting
+      }
 
-        const brandLogoLink = document.querySelector('.brand-logo');
-        if (brandLogoLink) {
-          const brandText = s.brand_name || 'VINTAGE AVENUE';
-          const adminTag = ' <small style="font-size: 0.8rem; color: var(--color-text-muted);">[ADMIN]</small>';
+      if (s.theme_palette) {
+        document.body.classList.remove('theme-emerald', 'theme-sapphire', 'theme-rose');
+        if (s.theme_palette !== 'gold') {
+          document.body.classList.add(`theme-${s.theme_palette}`);
+        }
+      }
 
-          if (s.site_logo_url) {
-            brandLogoLink.innerHTML = `<img src="${s.site_logo_url}" alt="${brandText}" class="brand-logo-img"> <span>${brandText}${adminTag}</span>`;
-          } else {
-            const iconClass = s.logo_icon || 'fa-gem';
-            brandLogoLink.innerHTML = `<i class="fa-solid ${iconClass}"></i> <span>${brandText}${adminTag}</span>`;
-          }
+      const brandLogoLink = document.querySelector('.brand-logo');
+      if (brandLogoLink) {
+        const brandText = s.brand_name || 'VINTAGE AVENUE';
+        const adminTag = ' <small style="font-size: 0.8rem; color: var(--color-text-muted);">[ADMIN]</small>';
+
+        if (s.site_logo_url) {
+          brandLogoLink.innerHTML = `<img src="${s.site_logo_url}" alt="${brandText}" class="brand-logo-img"> <span>${brandText}${adminTag}</span>`;
+        } else {
+          const iconClass = s.logo_icon || 'fa-gem';
+          brandLogoLink.innerHTML = `<i class="fa-solid ${iconClass}"></i> <span>${brandText}${adminTag}</span>`;
         }
       }
     } catch (err) {

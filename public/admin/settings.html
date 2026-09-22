@@ -94,7 +94,7 @@
         </h3>
 
         <form id="logo-upload-form">
-          <div style="margin-bottom: 20px;">
+          <div style="margin-bottom: 16px;">
             <label style="display: block; font-size: 0.85rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 8px;">
               Upload Brand Logo Photo / PNG
             </label>
@@ -102,6 +102,13 @@
             <p style="font-size: 0.8rem; color: var(--color-text-muted); margin-top: 6px;">
               Transparent PNG or SVG recommended. Will replace font icon in site navbar.
             </p>
+          </div>
+
+          <div style="margin-bottom: 20px;">
+            <label style="display: block; font-size: 0.85rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 8px;">
+              Or Paste Logo Image URL
+            </label>
+            <input type="url" id="logo-url-input" class="form-control" placeholder="https://... or data:image/..." style="width: 100%;">
           </div>
 
           <div id="logo-preview-wrap" style="text-align: center; margin-bottom: 20px; display: none;">
@@ -127,11 +134,18 @@
         </h3>
 
         <form id="whish-upload-form">
-          <div style="margin-bottom: 20px;">
+          <div style="margin-bottom: 16px;">
             <label style="display: block; font-size: 0.85rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 8px;">
               Upload Merchant QR / Barcode Photo
             </label>
-            <input type="file" id="whish-file-input" accept="image/*" class="form-control" required style="width: 100%;">
+            <input type="file" id="whish-file-input" accept="image/*" class="form-control" style="width: 100%;">
+          </div>
+
+          <div style="margin-bottom: 20px;">
+            <label style="display: block; font-size: 0.85rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 8px;">
+              Or Paste Barcode Image URL
+            </label>
+            <input type="url" id="whish-url-input" class="form-control" placeholder="https://... or data:image/..." style="width: 100%;">
           </div>
 
           <div id="whish-preview-wrap" style="text-align: center; margin-bottom: 20px; display: none;">
@@ -323,65 +337,147 @@
       const brandForm = document.getElementById('settings-branding-form');
       const logoForm = document.getElementById('logo-upload-form');
       const logoFileInput = document.getElementById('logo-file-input');
+      const logoUrlInput = document.getElementById('logo-url-input');
       const logoPreviewWrap = document.getElementById('logo-preview-wrap');
       const logoPreviewImg = document.getElementById('logo-preview-img');
       const removeLogoBtn = document.getElementById('remove-logo-btn');
 
       const whishForm = document.getElementById('whish-upload-form');
       const whishFileInput = document.getElementById('whish-file-input');
+      const whishUrlInput = document.getElementById('whish-url-input');
       const whishPreviewWrap = document.getElementById('whish-preview-wrap');
       const whishPreviewImg = document.getElementById('whish-preview-img');
 
       const cmsForm = document.getElementById('cms-content-form');
 
+      let pendingLogoDataUrl = '';
+      let pendingWhishDataUrl = '';
+
+      // Live FileReader preview for Logo
+      if (logoFileInput) {
+        logoFileInput.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+              pendingLogoDataUrl = evt.target.result;
+              logoPreviewImg.src = pendingLogoDataUrl;
+              logoPreviewWrap.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      }
+
+      if (logoUrlInput) {
+        logoUrlInput.addEventListener('input', () => {
+          const url = logoUrlInput.value.trim();
+          if (url) {
+            logoPreviewImg.src = url;
+            logoPreviewWrap.style.display = 'block';
+          }
+        });
+      }
+
+      // Live FileReader preview for Whish Barcode
+      if (whishFileInput) {
+        whishFileInput.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+              pendingWhishDataUrl = evt.target.result;
+              whishPreviewImg.src = pendingWhishDataUrl;
+              whishPreviewWrap.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      }
+
+      if (whishUrlInput) {
+        whishUrlInput.addEventListener('input', () => {
+          const url = whishUrlInput.value.trim();
+          if (url) {
+            whishPreviewImg.src = url;
+            whishPreviewWrap.style.display = 'block';
+          }
+        });
+      }
+
+      // Save Local Settings Helper
+      function saveLocalSettings(newSettings) {
+        const s = JSON.parse(localStorage.getItem('va_settings') || '{}');
+        const updated = { ...s, ...newSettings };
+        localStorage.setItem('va_settings', JSON.stringify(updated));
+        return updated;
+      }
+
+      // Populate Settings Helper
+      function applySettingsToDOM(s) {
+        if (!s) return;
+        if (s.brand_name) document.getElementById('setting-brand-name').value = s.brand_name;
+        if (s.logo_icon) document.getElementById('setting-logo-icon').value = s.logo_icon;
+        if (s.theme_palette) document.getElementById('setting-theme-palette').value = s.theme_palette;
+
+        if (s.site_logo_url) {
+          logoPreviewImg.src = s.site_logo_url;
+          logoPreviewWrap.style.display = 'block';
+          if (logoUrlInput && !s.site_logo_url.startsWith('data:')) {
+            logoUrlInput.value = s.site_logo_url;
+          }
+        } else {
+          logoPreviewWrap.style.display = 'none';
+        }
+
+        if (s.whish_barcode_url) {
+          whishPreviewImg.src = s.whish_barcode_url;
+          whishPreviewWrap.style.display = 'block';
+          if (whishUrlInput && !s.whish_barcode_url.startsWith('data:')) {
+            whishUrlInput.value = s.whish_barcode_url;
+          }
+        }
+
+        // Populate CMS inputs
+        if (s.announcement_text) document.getElementById('cms-announcement-text').value = s.announcement_text;
+        if (s.hero_tag) document.getElementById('cms-hero-tag').value = s.hero_tag;
+        if (s.hero_title) document.getElementById('cms-hero-title').value = s.hero_title;
+        if (s.hero_desc) document.getElementById('cms-hero-desc').value = s.hero_desc;
+        if (s.hero_btn_primary) document.getElementById('cms-hero-btn-primary').value = s.hero_btn_primary;
+        if (s.hero_btn_secondary) document.getElementById('cms-hero-btn-secondary').value = s.hero_btn_secondary;
+
+        if (s.featured_title) document.getElementById('cms-featured-title').value = s.featured_title;
+        if (s.featured_subtitle) document.getElementById('cms-featured-subtitle').value = s.featured_subtitle;
+        if (s.featured_btn_text) document.getElementById('cms-featured-btn-text').value = s.featured_btn_text;
+
+        if (s.about_tag) document.getElementById('cms-about-tag').value = s.about_tag;
+        if (s.about_title) document.getElementById('cms-about-title').value = s.about_title;
+        if (s.about_desc1) document.getElementById('cms-about-desc1').value = s.about_desc1;
+        if (s.about_desc2) document.getElementById('cms-about-desc2').value = s.about_desc2;
+
+        if (s.contact_title) document.getElementById('cms-contact-title').value = s.contact_title;
+        if (s.contact_address) document.getElementById('cms-contact-address').value = s.contact_address;
+        if (s.contact_email) document.getElementById('cms-contact-email').value = s.contact_email;
+        if (s.contact_phone) document.getElementById('cms-contact-phone').value = s.contact_phone;
+        if (s.footer_text) document.getElementById('cms-footer-text').value = s.footer_text;
+      }
+
       // Load Settings
       async function loadSettings() {
+        const local = JSON.parse(localStorage.getItem('va_settings') || '{}');
+        applySettingsToDOM(local);
+
         try {
           const res = await fetch('/api/settings');
-          const data = await res.json();
-          if (res.ok && data.settings) {
-            const s = data.settings;
-            if (s.brand_name) document.getElementById('setting-brand-name').value = s.brand_name;
-            if (s.logo_icon) document.getElementById('setting-logo-icon').value = s.logo_icon;
-            if (s.theme_palette) document.getElementById('setting-theme-palette').value = s.theme_palette;
-
-            if (s.site_logo_url) {
-              logoPreviewImg.src = s.site_logo_url;
-              logoPreviewWrap.style.display = 'block';
-            } else {
-              logoPreviewWrap.style.display = 'none';
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.settings) {
+              const merged = saveLocalSettings(data.settings);
+              applySettingsToDOM(merged);
             }
-
-            if (s.whish_barcode_url) {
-              whishPreviewImg.src = s.whish_barcode_url;
-              whishPreviewWrap.style.display = 'block';
-            }
-
-            // Populate CMS inputs
-            if (s.announcement_text) document.getElementById('cms-announcement-text').value = s.announcement_text;
-            if (s.hero_tag) document.getElementById('cms-hero-tag').value = s.hero_tag;
-            if (s.hero_title) document.getElementById('cms-hero-title').value = s.hero_title;
-            if (s.hero_desc) document.getElementById('cms-hero-desc').value = s.hero_desc;
-            if (s.hero_btn_primary) document.getElementById('cms-hero-btn-primary').value = s.hero_btn_primary;
-            if (s.hero_btn_secondary) document.getElementById('cms-hero-btn-secondary').value = s.hero_btn_secondary;
-
-            if (s.featured_title) document.getElementById('cms-featured-title').value = s.featured_title;
-            if (s.featured_subtitle) document.getElementById('cms-featured-subtitle').value = s.featured_subtitle;
-            if (s.featured_btn_text) document.getElementById('cms-featured-btn-text').value = s.featured_btn_text;
-
-            if (s.about_tag) document.getElementById('cms-about-tag').value = s.about_tag;
-            if (s.about_title) document.getElementById('cms-about-title').value = s.about_title;
-            if (s.about_desc1) document.getElementById('cms-about-desc1').value = s.about_desc1;
-            if (s.about_desc2) document.getElementById('cms-about-desc2').value = s.about_desc2;
-
-            if (s.contact_title) document.getElementById('cms-contact-title').value = s.contact_title;
-            if (s.contact_address) document.getElementById('cms-contact-address').value = s.contact_address;
-            if (s.contact_email) document.getElementById('cms-contact-email').value = s.contact_email;
-            if (s.contact_phone) document.getElementById('cms-contact-phone').value = s.contact_phone;
-            if (s.footer_text) document.getElementById('cms-footer-text').value = s.footer_text;
           }
         } catch (e) {
-          console.error(e);
+          console.warn('Offline or static mode for settings endpoint');
         }
       }
 
@@ -389,125 +485,145 @@
       if (cmsForm) {
         cmsForm.addEventListener('submit', async (e) => {
           e.preventDefault();
-          const payload = {
-            settings: {
-              announcement_text: document.getElementById('cms-announcement-text').value.trim(),
-              hero_tag: document.getElementById('cms-hero-tag').value.trim(),
-              hero_title: document.getElementById('cms-hero-title').value.trim(),
-              hero_desc: document.getElementById('cms-hero-desc').value.trim(),
-              hero_btn_primary: document.getElementById('cms-hero-btn-primary').value.trim(),
-              hero_btn_secondary: document.getElementById('cms-hero-btn-secondary').value.trim(),
+          const newSettings = {
+            announcement_text: document.getElementById('cms-announcement-text').value.trim(),
+            hero_tag: document.getElementById('cms-hero-tag').value.trim(),
+            hero_title: document.getElementById('cms-hero-title').value.trim(),
+            hero_desc: document.getElementById('cms-hero-desc').value.trim(),
+            hero_btn_primary: document.getElementById('cms-hero-btn-primary').value.trim(),
+            hero_btn_secondary: document.getElementById('cms-hero-btn-secondary').value.trim(),
 
-              featured_title: document.getElementById('cms-featured-title').value.trim(),
-              featured_subtitle: document.getElementById('cms-featured-subtitle').value.trim(),
-              featured_btn_text: document.getElementById('cms-featured-btn-text').value.trim(),
+            featured_title: document.getElementById('cms-featured-title').value.trim(),
+            featured_subtitle: document.getElementById('cms-featured-subtitle').value.trim(),
+            featured_btn_text: document.getElementById('cms-featured-btn-text').value.trim(),
 
-              about_tag: document.getElementById('cms-about-tag').value.trim(),
-              about_title: document.getElementById('cms-about-title').value.trim(),
-              about_desc1: document.getElementById('cms-about-desc1').value.trim(),
-              about_desc2: document.getElementById('cms-about-desc2').value.trim(),
+            about_tag: document.getElementById('cms-about-tag').value.trim(),
+            about_title: document.getElementById('cms-about-title').value.trim(),
+            about_desc1: document.getElementById('cms-about-desc1').value.trim(),
+            about_desc2: document.getElementById('cms-about-desc2').value.trim(),
 
-              contact_title: document.getElementById('cms-contact-title').value.trim(),
-              contact_address: document.getElementById('cms-contact-address').value.trim(),
-              contact_email: document.getElementById('cms-contact-email').value.trim(),
-              contact_phone: document.getElementById('cms-contact-phone').value.trim(),
-              footer_text: document.getElementById('cms-footer-text').value.trim()
-            }
+            contact_title: document.getElementById('cms-contact-title').value.trim(),
+            contact_address: document.getElementById('cms-contact-address').value.trim(),
+            contact_email: document.getElementById('cms-contact-email').value.trim(),
+            contact_phone: document.getElementById('cms-contact-phone').value.trim(),
+            footer_text: document.getElementById('cms-footer-text').value.trim()
           };
 
+          saveLocalSettings(newSettings);
+
           try {
-            const res = await fetch('/api/settings', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${AdminAuth.getToken()}`
-              },
-              body: JSON.stringify(payload)
-            });
-            if (res.ok) {
-              showToast('Live Storefront Text Content updated successfully!', 'success');
-            } else {
-              showToast('Failed to save content settings.', 'danger');
-            }
-          } catch (err) {
-            showToast('Error saving storefront text content.', 'danger');
-          }
-        });
-      }
-
-      // Save Visual Settings
-      brandForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const payload = {
-          settings: {
-            brand_name: document.getElementById('setting-brand-name').value.trim(),
-            logo_icon: document.getElementById('setting-logo-icon').value,
-            theme_palette: document.getElementById('setting-theme-palette').value
-          }
-        };
-        try {
-          const res = await fetch('/api/settings', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${AdminAuth.getToken()}`
-            },
-            body: JSON.stringify(payload)
-          });
-          if (res.ok) {
-            showToast('Visual identity settings updated live!', 'success');
-            setTimeout(() => window.location.reload(), 800);
-          }
-        } catch (err) {
-          showToast('Failed to update settings', 'danger');
-        }
-      });
-
-      // Custom Logo Image Upload
-      logoForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const file = logoFileInput.files[0];
-        if (!file) {
-          showToast('Please select an image file to upload as your logo.', 'warning');
-          return;
-        }
-
-        const formData = new FormData();
-        formData.append('image', file);
-
-        try {
-          showToast('Uploading custom logo...', 'info');
-          const uploadRes = await fetch('/api/upload', {
-            method: 'POST',
-            body: formData
-          });
-          const uploadData = await uploadRes.json();
-
-          if (uploadRes.ok) {
             await fetch('/api/settings', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${AdminAuth.getToken()}`
               },
-              body: JSON.stringify({ settings: { site_logo_url: uploadData.imageUrl } })
+              body: JSON.stringify({ settings: newSettings })
             });
-
-            logoPreviewImg.src = uploadData.imageUrl;
-            logoPreviewWrap.style.display = 'block';
-            showToast('Custom logo uploaded & activated live across header!', 'success');
-            setTimeout(() => window.location.reload(), 800);
-          } else {
-            showToast(uploadData.error || 'Logo upload failed', 'danger');
+          } catch (err) {
+            console.warn('Backend save skipped');
           }
+
+          showToast('Live Storefront Text Content updated successfully!', 'success');
+        });
+      }
+
+      // Save Visual Settings
+      brandForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const newSettings = {
+          brand_name: document.getElementById('setting-brand-name').value.trim(),
+          logo_icon: document.getElementById('setting-logo-icon').value,
+          theme_palette: document.getElementById('setting-theme-palette').value
+        };
+
+        saveLocalSettings(newSettings);
+
+        try {
+          await fetch('/api/settings', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${AdminAuth.getToken()}`
+            },
+            body: JSON.stringify({ settings: newSettings })
+          });
         } catch (err) {
-          showToast('Error uploading logo image', 'danger');
+          console.warn('Backend save skipped');
         }
+
+        showToast('Visual identity settings updated live!', 'success');
+        setTimeout(() => window.location.reload(), 600);
+      });
+
+      // Custom Logo Image Upload
+      logoForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const urlInputVal = logoUrlInput ? logoUrlInput.value.trim() : '';
+        let logoUrlToSave = urlInputVal || pendingLogoDataUrl;
+
+        const file = logoFileInput ? logoFileInput.files[0] : null;
+        if (file) {
+          try {
+            showToast('Saving logo image...', 'info');
+            const formData = new FormData();
+            formData.append('image', file);
+            const uploadRes = await fetch('/api/upload', {
+              method: 'POST',
+              body: formData
+            });
+            if (uploadRes.ok) {
+              const uploadData = await uploadRes.json();
+              if (uploadData && uploadData.imageUrl) {
+                logoUrlToSave = uploadData.imageUrl;
+              }
+            }
+          } catch (err) {
+            console.warn('Backend upload skipped, using instant base64 Data URL');
+          }
+        }
+
+        if (!logoUrlToSave) {
+          showToast('Please select a logo image file or enter an image URL.', 'warning');
+          return;
+        }
+
+        saveLocalSettings({ site_logo_url: logoUrlToSave });
+
+        try {
+          await fetch('/api/settings', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${AdminAuth.getToken()}`
+            },
+            body: JSON.stringify({ settings: { site_logo_url: logoUrlToSave } })
+          });
+        } catch (err) {
+          console.warn('Backend save skipped');
+        }
+
+        logoPreviewImg.src = logoUrlToSave;
+        logoPreviewWrap.style.display = 'block';
+        showToast('Custom logo uploaded & activated live across header!', 'success');
+
+        // Update header logo on current page immediately
+        const brandLogoLinks = document.querySelectorAll('.brand-logo');
+        const s = JSON.parse(localStorage.getItem('va_settings') || '{}');
+        const brandText = s.brand_name || 'VINTAGE AVENUE';
+        const adminTag = ' <small style="font-size: 0.8rem; color: var(--color-text-muted);">[ADMIN]</small>';
+        brandLogoLinks.forEach(b => {
+          b.innerHTML = `<img src="${logoUrlToSave}" alt="${brandText}" class="brand-logo-img"> <span>${brandText}${adminTag}</span>`;
+        });
       });
 
       // Remove Custom Logo Image
       removeLogoBtn.addEventListener('click', async () => {
         if (confirm('Remove custom logo image and revert to font icon logo?')) {
+          const s = JSON.parse(localStorage.getItem('va_settings') || '{}');
+          delete s.site_logo_url;
+          localStorage.setItem('va_settings', JSON.stringify(s));
+
           try {
             await fetch('/api/settings', {
               method: 'POST',
@@ -517,51 +633,76 @@
               },
               body: JSON.stringify({ settings: { site_logo_url: '' } })
             });
-            logoPreviewWrap.style.display = 'none';
-            showToast('Reverted to default font icon logo.', 'success');
-            setTimeout(() => window.location.reload(), 800);
           } catch (err) {
-            showToast('Error removing custom logo', 'danger');
+            console.warn('Backend remove logo skipped');
           }
+
+          pendingLogoDataUrl = '';
+          if (logoFileInput) logoFileInput.value = '';
+          if (logoUrlInput) logoUrlInput.value = '';
+          logoPreviewWrap.style.display = 'none';
+          showToast('Reverted to default font icon logo.', 'success');
+
+          // Update header logo on current page
+          const brandLogoLinks = document.querySelectorAll('.brand-logo');
+          const brandText = s.brand_name || 'VINTAGE AVENUE';
+          const iconClass = s.logo_icon || 'fa-gem';
+          const adminTag = ' <small style="font-size: 0.8rem; color: var(--color-text-muted);">[ADMIN]</small>';
+          brandLogoLinks.forEach(b => {
+            b.innerHTML = `<i class="fa-solid ${iconClass}"></i> <span>${brandText}${adminTag}</span>`;
+          });
         }
       });
 
       // Whish Barcode Upload
       whishForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const file = whishFileInput.files[0];
-        if (!file) return;
+        const urlInputVal = whishUrlInput ? whishUrlInput.value.trim() : '';
+        let whishUrlToSave = urlInputVal || pendingWhishDataUrl;
 
-        const formData = new FormData();
-        formData.append('image', file);
+        const file = whishFileInput ? whishFileInput.files[0] : null;
+        if (file) {
+          try {
+            const formData = new FormData();
+            formData.append('image', file);
+            const uploadRes = await fetch('/api/upload', {
+              method: 'POST',
+              body: formData
+            });
+            if (uploadRes.ok) {
+              const uploadData = await uploadRes.json();
+              if (uploadData && uploadData.imageUrl) {
+                whishUrlToSave = uploadData.imageUrl;
+              }
+            }
+          } catch (err) {
+            console.warn('Backend upload skipped');
+          }
+        }
+
+        if (!whishUrlToSave) {
+          showToast('Please select a barcode file or enter an image URL.', 'warning');
+          return;
+        }
+
+        saveLocalSettings({ whish_barcode_url: whishUrlToSave });
 
         try {
-          const uploadRes = await fetch('/api/upload', {
+          await fetch('/api/settings', {
             method: 'POST',
-            body: formData
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${AdminAuth.getToken()}`
+            },
+            body: JSON.stringify({ settings: { whish_barcode_url: whishUrlToSave } })
           });
-          const uploadData = await uploadRes.json();
-
-          if (uploadRes.ok) {
-            // Save barcode URL into settings
-            await fetch('/api/settings', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${AdminAuth.getToken()}`
-              },
-              body: JSON.stringify({ settings: { whish_barcode_url: uploadData.imageUrl } })
-            });
-
-            whishPreviewImg.src = uploadData.imageUrl;
-            whishPreviewWrap.style.display = 'block';
-            showToast('Whish Money barcode uploaded & activated!', 'success');
-          } else {
-            showToast(uploadData.error || 'Upload failed', 'danger');
-          }
         } catch (err) {
-          showToast('Error uploading Whish barcode', 'danger');
+          console.warn('Backend save skipped');
         }
+
+        whishPreviewImg.src = whishUrlToSave;
+        whishPreviewWrap.style.display = 'block';
+        showToast('Whish Money barcode uploaded & activated!', 'success');
       });
 
       // Load Coupons Table

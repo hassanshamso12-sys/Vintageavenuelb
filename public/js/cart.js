@@ -258,48 +258,58 @@ function showToast(message, type = 'info') {
 // Fetch live brand settings & theme customization
 async function applyLiveBrandSettings() {
   try {
-    const res = await fetch('/api/settings');
-    const data = await res.json();
-    if (res.ok && data.settings) {
-      const s = data.settings;
-      if (s.theme_palette) {
-        document.body.classList.remove('theme-emerald', 'theme-sapphire', 'theme-rose');
-        if (s.theme_palette !== 'gold') {
-          document.body.classList.add(`theme-${s.theme_palette}`);
+    let s = JSON.parse(localStorage.getItem('va_settings') || '{}');
+
+    try {
+      const res = await fetch('/api/settings');
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.settings) {
+          s = { ...s, ...data.settings };
+          localStorage.setItem('va_settings', JSON.stringify(s));
         }
       }
+    } catch (e) {
+      // ignore fetch failure on static hosting
+    }
 
-      // Brand Logo & Icon
-      const brandLogoLinks = document.querySelectorAll('.brand-logo');
-      brandLogoLinks.forEach(brandLogoLink => {
-        const brandText = s.brand_name || 'VINTAGE AVENUE';
-        if (s.site_logo_url) {
-          brandLogoLink.innerHTML = `<img src="${s.site_logo_url}" alt="${brandText}" class="brand-logo-img"> <span>${brandText}</span>`;
-        } else {
-          const iconClass = s.logo_icon || 'fa-gem';
-          brandLogoLink.innerHTML = `<i class="fa-solid ${iconClass}"></i> <span>${brandText}</span>`;
-        }
-      });
-
-      // Dynamic CMS Text Content for [data-cms] elements
-      document.querySelectorAll('[data-cms]').forEach(el => {
-        const key = el.getAttribute('data-cms');
-        if (s[key] !== undefined && s[key] !== null && s[key] !== '') {
-          el.textContent = s[key];
-        }
-      });
-
-      // Announcement Bar
-      if (s.announcement_text && s.announcement_text.trim() !== '') {
-        let bar = document.getElementById('announcement-bar');
-        if (!bar) {
-          bar = document.createElement('div');
-          bar.id = 'announcement-bar';
-          bar.className = 'announcement-bar';
-          document.body.insertBefore(bar, document.body.firstChild);
-        }
-        bar.textContent = s.announcement_text;
+    if (s.theme_palette) {
+      document.body.classList.remove('theme-emerald', 'theme-sapphire', 'theme-rose');
+      if (s.theme_palette !== 'gold') {
+        document.body.classList.add(`theme-${s.theme_palette}`);
       }
+    }
+
+    // Brand Logo & Icon
+    const brandLogoLinks = document.querySelectorAll('.brand-logo');
+    brandLogoLinks.forEach(brandLogoLink => {
+      const brandText = s.brand_name || 'VINTAGE AVENUE';
+      if (s.site_logo_url) {
+        brandLogoLink.innerHTML = `<img src="${s.site_logo_url}" alt="${brandText}" class="brand-logo-img"> <span>${brandText}</span>`;
+      } else {
+        const iconClass = s.logo_icon || 'fa-gem';
+        brandLogoLink.innerHTML = `<i class="fa-solid ${iconClass}"></i> <span>${brandText}</span>`;
+      }
+    });
+
+    // Dynamic CMS Text Content for [data-cms] elements
+    document.querySelectorAll('[data-cms]').forEach(el => {
+      const key = el.getAttribute('data-cms');
+      if (s[key] !== undefined && s[key] !== null && s[key] !== '') {
+        el.textContent = s[key];
+      }
+    });
+
+    // Announcement Bar
+    if (s.announcement_text && s.announcement_text.trim() !== '') {
+      let bar = document.getElementById('announcement-bar');
+      if (!bar) {
+        bar = document.createElement('div');
+        bar.id = 'announcement-bar';
+        bar.className = 'announcement-bar';
+        document.body.insertBefore(bar, document.body.firstChild);
+      }
+      bar.textContent = s.announcement_text;
     }
   } catch (e) {
     console.error('Failed loading storefront settings:', e);
