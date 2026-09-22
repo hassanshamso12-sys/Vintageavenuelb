@@ -52,6 +52,10 @@ export const AdminSettingsPage = () => {
   const [contactPhone, setContactPhone] = useState(settings.contact_phone || '');
   const [footerText, setFooterText] = useState(settings.footer_text || '');
 
+  const [deliveryRate, setDeliveryRate] = useState(settings.delivery_rate !== undefined ? settings.delivery_rate : 10.00);
+  const [expressDeliveryRate, setExpressDeliveryRate] = useState(settings.express_delivery_rate !== undefined ? settings.express_delivery_rate : 25.00);
+  const [freeDeliveryThreshold, setFreeDeliveryThreshold] = useState(settings.free_delivery_threshold !== undefined ? settings.free_delivery_threshold : 300.00);
+
   useEffect(() => {
     setBrandName(settings.brand_name || 'VINTAGE AVENUE');
     setLogoIcon(settings.logo_icon || 'fa-gem');
@@ -74,7 +78,21 @@ export const AdminSettingsPage = () => {
     setContactEmail(settings.contact_email || '');
     setContactPhone(settings.contact_phone || '');
     setFooterText(settings.footer_text || '');
+
+    setDeliveryRate(settings.delivery_rate !== undefined ? settings.delivery_rate : 10.00);
+    setExpressDeliveryRate(settings.express_delivery_rate !== undefined ? settings.express_delivery_rate : 25.00);
+    setFreeDeliveryThreshold(settings.free_delivery_threshold !== undefined ? settings.free_delivery_threshold : 300.00);
   }, [settings]);
+
+  const handleSaveDeliveryRates = (e) => {
+    e.preventDefault();
+    updateSettings({
+      delivery_rate: parseFloat(deliveryRate) || 0,
+      express_delivery_rate: parseFloat(expressDeliveryRate) || 0,
+      free_delivery_threshold: parseFloat(freeDeliveryThreshold) || 0
+    });
+    showToast('Delivery rate management settings updated live!', 'success');
+  };
 
   // Visual Identity Handler
   const handleSaveBranding = (e) => {
@@ -337,6 +355,33 @@ export const AdminSettingsPage = () => {
             )}
 
             <button type="submit" className="btn btn-gold" style={{ width: '100%' }}>Upload & Save Barcode</button>
+          </form>
+        </div>
+
+        {/* Delivery Rate Management Card */}
+        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '32px' }}>
+          <h3 style={{ fontSize: '1.4rem', color: 'var(--color-gold)', marginBottom: '20px' }}>
+            <i className="fa-solid fa-truck-fast"></i> Delivery Rate Management
+          </h3>
+
+          <form onSubmit={handleSaveDeliveryRates}>
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', textTransform: 'uppercase', color: 'var(--color-text-secondary)', marginBottom: '8px' }}>Standard Courier Shipping Fee ($)</label>
+              <input type="number" step="0.01" className="form-control" style={{ width: '100%' }} value={deliveryRate} onChange={e => setDeliveryRate(e.target.value)} placeholder="10.00" />
+            </div>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', textTransform: 'uppercase', color: 'var(--color-text-secondary)', marginBottom: '8px' }}>Express Vault Concierge Fee ($)</label>
+              <input type="number" step="0.01" className="form-control" style={{ width: '100%' }} value={expressDeliveryRate} onChange={e => setExpressDeliveryRate(e.target.value)} placeholder="25.00" />
+            </div>
+
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', textTransform: 'uppercase', color: 'var(--color-text-secondary)', marginBottom: '8px' }}>Free Delivery Order Threshold ($)</label>
+              <input type="number" step="0.01" className="form-control" style={{ width: '100%' }} value={freeDeliveryThreshold} onChange={e => setFreeDeliveryThreshold(e.target.value)} placeholder="300.00" />
+              <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginTop: '6px' }}>Orders with subtotal above this threshold automatically qualify for Free Standard Delivery.</p>
+            </div>
+
+            <button type="submit" className="btn btn-gold" style={{ width: '100%' }}>Save Delivery Rates</button>
           </form>
         </div>
       </div>

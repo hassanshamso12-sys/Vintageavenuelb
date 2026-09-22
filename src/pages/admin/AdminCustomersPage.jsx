@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 const DEFAULT_CUSTOMERS = [
   { id: 1, name: "Hassan Shamso", email: "hassan@vintageavenue.com", phone: "+961 70 123 456", total_orders: 5, total_spent: 4250.00, vip_level: "Diamond VIP" },
@@ -7,6 +7,44 @@ const DEFAULT_CUSTOMERS = [
 ];
 
 export const AdminCustomersPage = () => {
+  const [customers, setCustomers] = useState(DEFAULT_CUSTOMERS);
+
+  useEffect(() => {
+    try {
+      const savedOrders = localStorage.getItem('va_orders');
+      if (savedOrders) {
+        const orders = JSON.parse(savedOrders);
+        if (orders && orders.length > 0) {
+          const clientMap = {};
+          orders.forEach(o => {
+            const key = (o.customer_phone || o.customer_name).toLowerCase();
+            if (!clientMap[key]) {
+              clientMap[key] = {
+                id: o.id,
+                name: o.customer_name,
+                email: o.customer_email || 'N/A',
+                phone: o.customer_phone || 'N/A',
+                total_orders: 0,
+                total_spent: 0
+              };
+            }
+            clientMap[key].total_orders += 1;
+            clientMap[key].total_spent += Number(o.total_amount || 0);
+          });
+
+          const derived = Object.values(clientMap).map(c => ({
+            ...c,
+            vip_level: c.total_spent >= 3000 ? 'Diamond VIP' : (c.total_spent >= 1500 ? 'Gold VIP' : 'VIP Member')
+          }));
+
+          if (derived.length > 0) {
+            setCustomers(derived);
+          }
+        }
+      }
+    } catch (e) {}
+  }, []);
+
   return (
     <div className="container" style={{ padding: '40px 24px 80px' }}>
       <div className="section-header" style={{ marginBottom: '32px' }}>
@@ -33,12 +71,12 @@ export const AdminCustomersPage = () => {
             </tr>
           </thead>
           <tbody>
-            {DEFAULT_CUSTOMERS.map(c => (
-              <tr key={c.id}>
+            {customers.map(c => (
+              <tr key={c.id || c.name}>
                 <td><strong>{c.name}</strong></td>
-                <td>{c.email}</td>
+                <td>{c.email && c.email !== 'N/A' ? c.email : <span style={{ color: 'var(--color-text-muted)', italic: true }}>Optional / Unprovided</span>}</td>
                 <td>{c.phone}</td>
-                <td>{c.total_orders} orders</td>
+                <td>{c.total_orders} order(s)</td>
                 <td style={{ fontFamily: 'var(--font-heading)', fontSize: '1.1rem', fontWeight: 700, color: 'var(--color-gold)' }}>
                   ${c.total_spent.toFixed(2)}
                 </td>
