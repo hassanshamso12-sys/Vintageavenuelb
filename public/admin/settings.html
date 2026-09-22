@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Store Settings & Branding | Vintage Avenue Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Admin Navigation Header -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="/admin/dashboard.html" class="brand-logo">
+        <i class="fa-solid fa-gem"></i>
+        <span>VINTAGE AVENUE <small style="font-size: 0.8rem; color: var(--color-text-muted);">[ADMIN]</small></span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="/admin/dashboard.html">Dashboard</a></li>
+        <li><a href="/admin/products.html">Products</a></li>
+        <li><a href="/admin/categories.html">Categories</a></li>
+        <li><a href="/admin/orders.html">Orders</a></li>
+        <li><a href="/admin/customers.html">Recurrent VIPs</a></li>
+        <li><a href="/admin/sales.html">Sales Reports</a></li>
+        <li><a href="/admin/settings.html" class="active">Settings & Visuals</a></li>
+        <li><a href="/index.html" target="_blank" style="color: var(--color-text-secondary);"><i class="fa-solid fa-external-link"></i> Live Store</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button id="admin-logout-btn" class="btn btn-outline btn-sm">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="padding: 40px 24px 80px;">
+    <div class="section-header">
+      <div>
+        <h1 class="section-title" style="font-size: 2.8rem; color: var(--color-gold);">Visual Identity & Store Settings</h1>
+        <p class="section-subtitle">Customize logo, color palette, upload Whish Money payment barcode, and manage discount coupons</p>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 32px; align-items: start;">
+
+      <!-- Visual Identity Card -->
+      <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 32px;">
+        <h3 style="font-size: 1.5rem; color: var(--color-gold); margin-bottom: 20px;">
+          <i class="fa-solid fa-palette"></i> Live Color Palette & Logo Icon
+        </h3>
+
+        <form id="settings-branding-form">
+          <div style="margin-bottom: 20px;">
+            <label style="display: block; font-size: 0.85rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 8px;">
+              Brand Name Text
+            </label>
+            <input type="text" id="setting-brand-name" class="form-control" value="VINTAGE AVENUE" style="width: 100%;">
+          </div>
+
+          <div style="margin-bottom: 20px;">
+            <label style="display: block; font-size: 0.85rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 8px;">
+              Logo Icon (FontAwesome)
+            </label>
+            <select id="setting-logo-icon" class="form-control" style="width: 100%;">
+              <option value="fa-gem">Gem Diamond (fa-gem)</option>
+              <option value="fa-crown">Royal Crown (fa-crown)</option>
+              <option value="fa-feather">Vintage Feather (fa-feather)</option>
+              <option value="fa-clock">Classic Clock (fa-clock)</option>
+              <option value="fa-shield-halved">Heritage Shield (fa-shield-halved)</option>
+            </select>
+          </div>
+
+          <div style="margin-bottom: 24px;">
+            <label style="display: block; font-size: 0.85rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 8px;">
+              Primary Color Palette Theme
+            </label>
+            <select id="setting-theme-palette" class="form-control" style="width: 100%;">
+              <option value="gold">Champagne Gold (Default Luxury)</option>
+              <option value="emerald">Imperial Emerald</option>
+              <option value="sapphire">Royal Sapphire</option>
+              <option value="rose">Rose Gold</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn btn-gold" style="width: 100%;">Save Visual Identity</button>
+        </form>
+      </div>
+
+      <!-- Custom Brand Logo Upload Card -->
+      <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 32px;">
+        <h3 style="font-size: 1.5rem; color: var(--color-gold); margin-bottom: 20px;">
+          <i class="fa-solid fa-image"></i> Custom Brand Logo Image
+        </h3>
+
+        <form id="logo-upload-form">
+          <div style="margin-bottom: 20px;">
+            <label style="display: block; font-size: 0.85rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 8px;">
+              Upload Brand Logo Photo / PNG
+            </label>
+            <input type="file" id="logo-file-input" accept="image/*" class="form-control" style="width: 100%;">
+            <p style="font-size: 0.8rem; color: var(--color-text-muted); margin-top: 6px;">
+              Transparent PNG or SVG recommended. Will replace font icon in site navbar.
+            </p>
+          </div>
+
+          <div id="logo-preview-wrap" style="text-align: center; margin-bottom: 20px; display: none;">
+            <div style="font-size: 0.8rem; color: var(--color-text-muted); margin-bottom: 8px;">Header Logo Preview:</div>
+            <div style="background: var(--bg-primary); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); display: inline-block;">
+              <img id="logo-preview-img" src="" alt="Custom Logo Preview" style="max-height: 48px; width: auto; object-fit: contain;">
+            </div>
+            <div style="margin-top: 10px;">
+              <button type="button" id="remove-logo-btn" class="btn btn-outline btn-sm" style="color: #ef4444; border-color: #ef4444;">
+                <i class="fa-solid fa-trash"></i> Remove Logo Image
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-gold" style="width: 100%;">Upload & Save Logo</button>
+        </form>
+      </div>
+
+      <!-- Whish Money Payment Barcode Upload Card -->
+      <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 32px;">
+        <h3 style="font-size: 1.5rem; color: var(--color-gold); margin-bottom: 20px;">
+          <i class="fa-solid fa-qrcode"></i> Whish Money Payment Barcode
+        </h3>
+
+        <form id="whish-upload-form">
+          <div style="margin-bottom: 20px;">
+            <label style="display: block; font-size: 0.85rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 8px;">
+              Upload Merchant QR / Barcode Photo
+            </label>
+            <input type="file" id="whish-file-input" accept="image/*" class="form-control" required style="width: 100%;">
+          </div>
+
+          <div id="whish-preview-wrap" style="text-align: center; margin-bottom: 20px; display: none;">
+            <div style="font-size: 0.8rem; color: var(--color-text-muted); margin-bottom: 8px;">Live Barcode Preview:</div>
+            <img id="whish-preview-img" src="" alt="Whish Barcode Preview" style="max-width: 200px; border-radius: 8px; border: 1px solid var(--border-color); padding: 8px; background: #fff;">
+          </div>
+
+          <button type="submit" class="btn btn-gold" style="width: 100%;">Upload & Save Barcode</button>
+        </form>
+      </div>
+
+      <!-- Coupon Codes Manager Card -->
+      <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 32px; grid-column: 1 / -1;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h3 style="font-size: 1.5rem; color: var(--color-gold);">
+            <i class="fa-solid fa-ticket"></i> Active Discount Coupons
+          </h3>
+        </div>
+
+        <!-- Add Coupon Form -->
+        <form id="add-coupon-form" style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; background: var(--bg-secondary); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+          <input type="text" id="coupon-code-input" class="form-control" placeholder="CODE (e.g. SUMMER15)" required style="text-transform: uppercase; flex: 1;">
+          <select id="coupon-type-input" class="form-control" style="width: 150px;">
+            <option value="percentage">Percentage (%)</option>
+            <option value="fixed">Fixed ($)</option>
+          </select>
+          <input type="number" id="coupon-value-input" class="form-control" placeholder="Value (e.g. 15)" required step="0.01" min="0.01" style="width: 130px;">
+          <input type="number" id="coupon-min-input" class="form-control" placeholder="Min Order ($)" step="0.01" min="0" style="width: 140px;">
+          <button type="submit" class="btn btn-gold btn-sm">Add Coupon</button>
+        </form>
+
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Coupon Code</th>
+                <th>Discount Type</th>
+                <th>Value</th>
+                <th>Min Order Req.</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="coupons-table-body">
+              <!-- Loaded via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="/js/admin.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const authenticated = await AdminAuth.checkAuthOrRedirect();
+      if (!authenticated) return;
+
+      const brandForm = document.getElementById('settings-branding-form');
+      const logoForm = document.getElementById('logo-upload-form');
+      const logoFileInput = document.getElementById('logo-file-input');
+      const logoPreviewWrap = document.getElementById('logo-preview-wrap');
+      const logoPreviewImg = document.getElementById('logo-preview-img');
+      const removeLogoBtn = document.getElementById('remove-logo-btn');
+
+      const whishForm = document.getElementById('whish-upload-form');
+      const whishFileInput = document.getElementById('whish-file-input');
+      const whishPreviewWrap = document.getElementById('whish-preview-wrap');
+      const whishPreviewImg = document.getElementById('whish-preview-img');
+
+      // Load Settings
+      async function loadSettings() {
+        try {
+          const res = await fetch('/api/settings');
+          const data = await res.json();
+          if (res.ok && data.settings) {
+            const s = data.settings;
+            if (s.brand_name) document.getElementById('setting-brand-name').value = s.brand_name;
+            if (s.logo_icon) document.getElementById('setting-logo-icon').value = s.logo_icon;
+            if (s.theme_palette) document.getElementById('setting-theme-palette').value = s.theme_palette;
+
+            if (s.site_logo_url) {
+              logoPreviewImg.src = s.site_logo_url;
+              logoPreviewWrap.style.display = 'block';
+            } else {
+              logoPreviewWrap.style.display = 'none';
+            }
+
+            if (s.whish_barcode_url) {
+              whishPreviewImg.src = s.whish_barcode_url;
+              whishPreviewWrap.style.display = 'block';
+            }
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      // Save Visual Settings
+      brandForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const payload = {
+          settings: {
+            brand_name: document.getElementById('setting-brand-name').value.trim(),
+            logo_icon: document.getElementById('setting-logo-icon').value,
+            theme_palette: document.getElementById('setting-theme-palette').value
+          }
+        };
+        try {
+          const res = await fetch('/api/settings', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${AdminAuth.getToken()}`
+            },
+            body: JSON.stringify(payload)
+          });
+          if (res.ok) {
+            showToast('Visual identity settings updated live!', 'success');
+            setTimeout(() => window.location.reload(), 800);
+          }
+        } catch (err) {
+          showToast('Failed to update settings', 'danger');
+        }
+      });
+
+      // Custom Logo Image Upload
+      logoForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const file = logoFileInput.files[0];
+        if (!file) {
+          showToast('Please select an image file to upload as your logo.', 'warning');
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+          showToast('Uploading custom logo...', 'info');
+          const uploadRes = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData
+          });
+          const uploadData = await uploadRes.json();
+
+          if (uploadRes.ok) {
+            await fetch('/api/settings', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${AdminAuth.getToken()}`
+              },
+              body: JSON.stringify({ settings: { site_logo_url: uploadData.imageUrl } })
+            });
+
+            logoPreviewImg.src = uploadData.imageUrl;
+            logoPreviewWrap.style.display = 'block';
+            showToast('Custom logo uploaded & activated live across header!', 'success');
+            setTimeout(() => window.location.reload(), 800);
+          } else {
+            showToast(uploadData.error || 'Logo upload failed', 'danger');
+          }
+        } catch (err) {
+          showToast('Error uploading logo image', 'danger');
+        }
+      });
+
+      // Remove Custom Logo Image
+      removeLogoBtn.addEventListener('click', async () => {
+        if (confirm('Remove custom logo image and revert to font icon logo?')) {
+          try {
+            await fetch('/api/settings', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${AdminAuth.getToken()}`
+              },
+              body: JSON.stringify({ settings: { site_logo_url: '' } })
+            });
+            logoPreviewWrap.style.display = 'none';
+            showToast('Reverted to default font icon logo.', 'success');
+            setTimeout(() => window.location.reload(), 800);
+          } catch (err) {
+            showToast('Error removing custom logo', 'danger');
+          }
+        }
+      });
+
+      // Whish Barcode Upload
+      whishForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const file = whishFileInput.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+          const uploadRes = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData
+          });
+          const uploadData = await uploadRes.json();
+
+          if (uploadRes.ok) {
+            // Save barcode URL into settings
+            await fetch('/api/settings', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${AdminAuth.getToken()}`
+              },
+              body: JSON.stringify({ settings: { whish_barcode_url: uploadData.imageUrl } })
+            });
+
+            whishPreviewImg.src = uploadData.imageUrl;
+            whishPreviewWrap.style.display = 'block';
+            showToast('Whish Money barcode uploaded & activated!', 'success');
+          } else {
+            showToast(uploadData.error || 'Upload failed', 'danger');
+          }
+        } catch (err) {
+          showToast('Error uploading Whish barcode', 'danger');
+        }
+      });
+
+      // Load Coupons Table
+      const couponTable = document.getElementById('coupons-table-body');
+      async function loadCoupons() {
+        try {
+          const res = await fetch('/api/coupons', {
+            headers: { 'Authorization': `Bearer ${AdminAuth.getToken()}` }
+          });
+          const data = await res.json();
+          if (res.ok) {
+            if (data.coupons.length === 0) {
+              couponTable.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--color-text-secondary);">No active coupons created yet.</td></tr>`;
+              return;
+            }
+            couponTable.innerHTML = data.coupons.map(c => `
+              <tr>
+                <td><code>${c.code}</code></td>
+                <td>${c.discount_type.toUpperCase()}</td>
+                <td>${c.discount_type === 'percentage' ? `${c.discount_value}%` : `$${c.discount_value.toFixed(2)}`}</td>
+                <td>$${c.min_order_amount.toFixed(2)}</td>
+                <td><span style="color: #10b981;">Active</span></td>
+                <td>
+                  <button class="btn btn-danger btn-sm delete-coupon-btn" data-id="${c.id}">Delete</button>
+                </td>
+              </tr>
+            `).join('');
+
+            document.querySelectorAll('.delete-coupon-btn').forEach(btn => {
+              btn.addEventListener('click', async (e) => {
+                const id = e.target.getAttribute('data-id');
+                if (confirm('Delete this coupon code?')) {
+                  await fetch(`/api/coupons/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${AdminAuth.getToken()}` }
+                  });
+                  showToast('Coupon deleted', 'success');
+                  loadCoupons();
+                }
+              });
+            });
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      // Add Coupon Form Submission
+      const addCouponForm = document.getElementById('add-coupon-form');
+      addCouponForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const payload = {
+          code: document.getElementById('coupon-code-input').value.trim(),
+          discount_type: document.getElementById('coupon-type-input').value,
+          discount_value: parseFloat(document.getElementById('coupon-value-input').value),
+          min_order_amount: parseFloat(document.getElementById('coupon-min-input').value || 0)
+        };
+
+        try {
+          const res = await fetch('/api/coupons', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${AdminAuth.getToken()}`
+            },
+            body: JSON.stringify(payload)
+          });
+          const data = await res.json();
+          if (res.ok) {
+            showToast('Coupon added successfully!', 'success');
+            addCouponForm.reset();
+            loadCoupons();
+          } else {
+            showToast(data.error || 'Failed to add coupon', 'danger');
+          }
+        } catch (err) {
+          showToast('Error creating coupon', 'danger');
+        }
+      });
+
+      loadSettings();
+      loadCoupons();
+    });
+  </script>
+</body>
+</html>

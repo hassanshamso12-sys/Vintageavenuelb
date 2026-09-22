@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vintage Catalog | Vintage Avenue</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="/index.html" class="brand-logo">
+        <i class="fa-solid fa-gem"></i>
+        <span>VINTAGE AVENUE</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="/index.html">Home</a></li>
+        <li class="has-dropdown">
+          <a href="/products.html" class="active">Catalog <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem; margin-left: 4px;"></i></a>
+          <div class="nav-dropdown">
+            <a href="/products.html">All Items</a>
+            <a href="/products.html?category=Apparel">Apparel</a>
+            <a href="/products.html?category=Timepieces">Timepieces</a>
+            <a href="/products.html?category=Jewelry">Jewelry</a>
+            <a href="/products.html?category=Accessories">Accessories</a>
+            <a href="/products.html?category=Collectibles">Collectibles</a>
+          </div>
+        </li>
+        <li><a href="/about.html">Our Story</a></li>
+        <li><a href="/contact.html">Contact</a></li>
+        <li><a href="/admin/login.html" style="color: var(--color-text-muted);">Admin Portal</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="#" class="cart-icon-btn" title="View Cart">
+          <i class="fa-solid fa-bag-shopping"></i>
+          <span id="cart-badge" class="cart-badge" style="display: none;">0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Slide-Over Drawer Cart -->
+  <div id="cart-drawer-overlay" class="cart-drawer-overlay"></div>
+  <div id="cart-drawer" class="cart-drawer">
+    <div class="cart-drawer-header">
+      <h3 class="cart-drawer-title">Shopping Bag</h3>
+      <button id="cart-drawer-close" class="cart-drawer-close">&times;</button>
+    </div>
+    <div id="cart-drawer-items" class="cart-drawer-body"></div>
+    <div class="cart-drawer-footer">
+      <div style="margin-bottom: 16px;">
+        <div style="display: flex; gap: 8px; margin-bottom: 6px;">
+          <input type="text" id="drawer-coupon-input" class="form-control" placeholder="Promo code (e.g. VINTAGE10)" style="flex-grow: 1; padding: 8px 12px; font-size: 0.85rem;">
+          <button id="drawer-apply-coupon-btn" class="btn btn-outline btn-sm">Apply</button>
+        </div>
+        <div id="drawer-coupon-msg" style="font-size: 0.8rem;"></div>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--color-text-secondary); font-size: 0.9rem;">
+        <span>Subtotal</span>
+        <span id="drawer-subtotal">$0.00</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--color-text-secondary); font-size: 0.9rem;">
+        <span>Discount</span>
+        <span id="drawer-discount" style="color: #10b981;">-$0.00</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-size: 1.3rem; font-weight: 700; color: var(--color-gold); border-top: 1px dashed var(--border-color); padding-top: 12px; margin-bottom: 20px;">
+        <span>Total</span>
+        <span id="drawer-total">$0.00</span>
+      </div>
+      <a href="/checkout.html" class="btn btn-gold" style="width: 100%;">Proceed to Checkout &rarr;</a>
+    </div>
+  </div>
+
+  <div style="background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); padding: 50px 0;">
+    <div class="container">
+      <h1 style="font-size: 3rem; font-weight: 700; color: var(--color-gold);">Vintage Collection Catalog</h1>
+      <p style="color: var(--color-text-secondary); font-size: 1.1rem; margin-top: 4px;">
+        Browse our rare inventory of vintage garments, timepieces, jewelry, and retro collectibles.
+      </p>
+    </div>
+  </div>
+
+  <main class="container" style="padding: 40px 24px 80px;">
+    <div class="filter-toolbar">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="search-input" placeholder="Search by name, SKU, or era (e.g. 1970s, Rolex, Leather)...">
+      </div>
+
+      <div class="filter-group">
+        <select id="category-filter" class="form-control">
+          <option value="All">All Categories</option>
+        </select>
+
+        <select id="subcategory-filter" class="form-control">
+          <option value="All">All Subcategories</option>
+        </select>
+
+        <select id="sort-filter" class="form-control">
+          <option value="">Sort By: Newest First</option>
+          <option value="price_asc">Price: Low to High</option>
+          <option value="price_desc">Price: High to Low</option>
+          <option value="name_asc">Name: A to Z</option>
+          <option value="stock_asc">Stock Level: Lowest First</option>
+        </select>
+      </div>
+
+      <div id="results-count" style="margin-left: auto; color: var(--color-gold); font-weight: 600; font-size: 0.9rem;">
+        Loading...
+      </div>
+    </div>
+
+    <div id="product-grid" class="product-grid"></div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 Vintage Avenue E-Commerce & Retail Management System.</p>
+    </div>
+  </footer>
+
+  <script src="/js/cart.js"></script>
+  <script src="/js/products.js"></script>
+</body>
+</html>

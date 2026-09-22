@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sales Reporting | Vintage Avenue Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Admin Navigation Header -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="/admin/dashboard.html" class="brand-logo">
+        <i class="fa-solid fa-gem"></i>
+        <span>VINTAGE AVENUE <small style="font-size: 0.8rem; color: var(--color-text-muted);">[ADMIN]</small></span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="/admin/dashboard.html">Dashboard</a></li>
+        <li><a href="/admin/products.html">Products</a></li>
+        <li><a href="/admin/categories.html">Categories</a></li>
+        <li><a href="/admin/orders.html">Orders</a></li>
+        <li><a href="/admin/customers.html">Recurrent VIPs</a></li>
+        <li><a href="/admin/sales.html" class="active">Sales Reports</a></li>
+        <li><a href="/admin/settings.html">Settings & Visuals</a></li>
+        <li><a href="/index.html" target="_blank" style="color: var(--color-text-secondary);"><i class="fa-solid fa-external-link"></i> Live Store</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button id="admin-logout-btn" class="btn btn-outline btn-sm">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="padding: 40px 24px 80px;">
+    <div class="section-header">
+      <div>
+        <h1 class="section-title" style="font-size: 2.8rem; color: var(--color-gold);">Sales & Retail Analytics</h1>
+        <p class="section-subtitle">Detailed financial reports, category revenue breakdowns, and unit velocity analytics</p>
+      </div>
+    </div>
+
+    <!-- KPI Summaries -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-title">Gross Revenue</div>
+        <div id="kpi-total-revenue" class="kpi-value">$0.00</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Monthly Revenue</div>
+        <div id="kpi-monthly-sales" class="kpi-value">$0.00</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Average Order Value</div>
+        <div id="kpi-aov" class="kpi-value">$0.00</div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 32px; margin-top: 32px;">
+      
+      <!-- Sales by Category -->
+      <div class="data-table-container" style="padding: 24px;">
+        <h3 style="font-size: 1.4rem; font-weight: 700; color: var(--color-gold); margin-bottom: 16px;">
+          Revenue by Category
+        </h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Units Sold</th>
+              <th>Total Revenue</th>
+            </tr>
+          </thead>
+          <tbody id="category-sales-table">
+            <!-- Loaded via js/sales.js -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Top Selling Vintage Items -->
+      <div class="data-table-container" style="padding: 24px;">
+        <h3 style="font-size: 1.4rem; font-weight: 700; color: var(--color-gold); margin-bottom: 16px;">
+          Top Performing Items
+        </h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Category</th>
+              <th>Units Sold</th>
+              <th>Revenue</th>
+            </tr>
+          </thead>
+          <tbody id="top-products-table">
+            <!-- Loaded via js/sales.js -->
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="/js/admin.js"></script>
+  <script src="/js/sales.js"></script>
+</body>
+</html>
