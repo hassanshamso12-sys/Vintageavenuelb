@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 
 const DEFAULT_PRODUCTS = [
@@ -164,7 +164,7 @@ export const CatalogPage = () => {
       ) : (
         <div className="product-grid">
           {filteredProducts.map(product => (
-            <div key={product.id} className="product-card">
+            <Link key={product.id} to={`/product/${product.id}`} className="product-card" style={{ cursor: 'pointer', textDecoration: 'none' }}>
               <div className="product-image-wrap">
                 <img src={product.image_url || (product.images ? product.images[0] : '/uploads/placeholder.jpg')} alt={product.name} />
                 <span className="badge-era">{product.era || 'Vintage'}</span>
@@ -181,7 +181,7 @@ export const CatalogPage = () => {
                 <div className="product-bottom">
                   <span className="product-price">${Number(product.price).toFixed(2)}</span>
                   <button
-                    onClick={() => addToCart(product)}
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); addToCart(product); }}
                     className="btn btn-gold btn-sm"
                     disabled={product.quantity === 0}
                   >
@@ -189,7 +189,7 @@ export const CatalogPage = () => {
                   </button>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}

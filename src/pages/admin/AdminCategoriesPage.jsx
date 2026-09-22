@@ -119,19 +119,24 @@ export const AdminCategoriesPage = () => {
         </button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '24px' }}>
         {categories.map(cat => (
-          <div key={cat.id} style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid var(--border-color)' }}>
-              <div>
-                <h3 style={{ fontSize: '1.3rem', color: 'var(--color-gold)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <i className="fa-solid fa-folder"></i> {cat.name}
-                </h3>
-              </div>
-              <div style={{ display: 'flex', gap: '6px' }}>
-                <button onClick={() => { setEditCatId(cat.id); setCatNameInput(cat.name); setShowCatModal(true); }} className="btn btn-outline btn-sm">Edit</button>
-                <button onClick={() => handleDeleteCategory(cat.id, cat.name)} className="btn btn-danger btn-sm">Delete</button>
-                <button onClick={() => { setParentCatObj(cat); setSubNameInput(''); setShowSubModal(true); }} className="btn btn-gold btn-sm">+ Sub</button>
+          <div key={cat.id} style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '24px', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid var(--border-color)' }}>
+              <h3 style={{ fontSize: '1.25rem', color: 'var(--color-gold)', display: 'flex', alignItems: 'center', gap: '8px', wordBreak: 'break-word' }}>
+                <i className="fa-solid fa-folder"></i> {cat.name}
+              </h3>
+
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+                <button onClick={() => { setEditCatId(cat.id); setCatNameInput(cat.name); setShowCatModal(true); }} className="btn btn-outline btn-sm">
+                  Edit
+                </button>
+                <button onClick={() => handleDeleteCategory(cat.id, cat.name)} className="btn btn-danger btn-sm">
+                  Delete
+                </button>
+                <button onClick={() => { setParentCatObj(cat); setSubNameInput(''); setShowSubModal(true); }} className="btn btn-gold btn-sm">
+                  + Subcategory
+                </button>
               </div>
             </div>
 

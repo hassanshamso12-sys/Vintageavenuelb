@@ -13,6 +13,7 @@ import { Footer } from './components/Footer';
 // Public Pages
 import { HomePage } from './pages/HomePage';
 import { CatalogPage } from './pages/CatalogPage';
+import { ProductDetailPage } from './pages/ProductDetailPage';
 import { AboutPage } from './pages/AboutPage';
 import { ContactPage } from './pages/ContactPage';
 import { CheckoutPage } from './pages/CheckoutPage';
@@ -65,6 +66,7 @@ const AppLayout = () => {
           {/* Public Storefront Routes */}
           <Route path="/" element={<HomePage />} />
           <Route path="/products" element={<CatalogPage />} />
+          <Route path="/product/:id" element={<ProductDetailPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
