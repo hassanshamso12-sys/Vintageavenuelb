@@ -87,10 +87,25 @@ export const AdminSettingsPage = () => {
     showToast('Visual identity settings updated live!', 'success');
   };
 
+  // Custom Logo & Whish File State
+  const [logoFile, setLogoFile] = useState(null);
+  const [whishFile, setWhishFile] = useState(null);
+
+  const readFileAsDataURL = (file) => {
+    return new Promise((resolve) => {
+      if (!file) return resolve('');
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result || '');
+      reader.onerror = () => resolve('');
+      reader.readAsDataURL(file);
+    });
+  };
+
   // Custom Logo Upload Handler
   const handleLogoFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setLogoFile(file);
       const reader = new FileReader();
       reader.onload = (evt) => {
         setPendingLogoDataUrl(evt.target.result);
@@ -99,9 +114,14 @@ export const AdminSettingsPage = () => {
     }
   };
 
-  const handleSaveLogo = (e) => {
+  const handleSaveLogo = async (e) => {
     e.preventDefault();
-    const logoToSave = logoUrlInput.trim() || pendingLogoDataUrl;
+    let logoToSave = logoUrlInput.trim() || pendingLogoDataUrl;
+    if (logoFile) {
+      const dataUrl = await readFileAsDataURL(logoFile);
+      if (dataUrl) logoToSave = dataUrl;
+    }
+
     if (!logoToSave) {
       showToast('Please select a logo image file or enter an image URL.', 'warning');
       return;
@@ -113,6 +133,7 @@ export const AdminSettingsPage = () => {
   const handleRemoveLogo = () => {
     if (window.confirm('Remove custom logo image and revert to font icon logo?')) {
       updateSettings({ site_logo_url: '' });
+      setLogoFile(null);
       setPendingLogoDataUrl('');
       setLogoUrlInput('');
       showToast('Reverted to default font icon logo.', 'success');
@@ -123,6 +144,7 @@ export const AdminSettingsPage = () => {
   const handleWhishFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setWhishFile(file);
       const reader = new FileReader();
       reader.onload = (evt) => {
         setPendingWhishDataUrl(evt.target.result);
@@ -131,9 +153,14 @@ export const AdminSettingsPage = () => {
     }
   };
 
-  const handleSaveWhish = (e) => {
+  const handleSaveWhish = async (e) => {
     e.preventDefault();
-    const whishToSave = whishUrlInput.trim() || pendingWhishDataUrl;
+    let whishToSave = whishUrlInput.trim() || pendingWhishDataUrl;
+    if (whishFile) {
+      const dataUrl = await readFileAsDataURL(whishFile);
+      if (dataUrl) whishToSave = dataUrl;
+    }
+
     if (!whishToSave) {
       showToast('Please select a barcode file or enter an image URL.', 'warning');
       return;

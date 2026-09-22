@@ -45,6 +45,9 @@ export const Navbar = () => {
 
               <div className={`nav-dropdown ${dropdownOpen ? 'show' : ''}`}>
                 <span className="dropdown-cat-title">Apparel & Clothing</span>
+                <Link to="/products?category=Apparel%20%26%20Clothing" className="dropdown-sub-item">
+                  • All Apparel
+                </Link>
                 <Link to="/products?category=Apparel%20%26%20Clothing&subcategory=Vintage%20Jackets" className="dropdown-sub-item">
                   • Vintage Jackets
                 </Link>
@@ -53,37 +56,28 @@ export const Navbar = () => {
                 </Link>
 
                 <span className="dropdown-cat-title">Rare Watches</span>
+                <Link to="/products?category=Rare%20Watches" className="dropdown-sub-item">
+                  • All Watches
+                </Link>
                 <Link to="/products?category=Rare%20Watches&subcategory=Automatic%20Chronographs" className="dropdown-sub-item">
                   • Automatic Chronographs
                 </Link>
 
                 <span className="dropdown-cat-title">Luxury Accessories</span>
+                <Link to="/products?category=Luxury%20Accessories" className="dropdown-sub-item">
+                  • All Accessories
+                </Link>
                 <Link to="/products?category=Luxury%20Accessories&subcategory=Leather%20Bags" className="dropdown-sub-item">
                   • Leather Bags
                 </Link>
 
                 <div style={{ borderTop: '1px solid var(--border-color)', margin: '8px 0' }}></div>
                 <Link to="/products" style={{ fontWeight: 700, color: 'var(--color-gold)' }}>
-                  View All Artifacts →
+                  View All Vault Artifacts →
                 </Link>
               </div>
             </li>
 
-            <li>
-              <NavLink to="/products?category=Apparel%20%26%20Clothing" className={({ isActive }) => (isActive ? 'active' : '')}>
-                Apparel
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/products?category=Rare%20Watches" className={({ isActive }) => (isActive ? 'active' : '')}>
-                Watches
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/products?category=Luxury%20Accessories" className={({ isActive }) => (isActive ? 'active' : '')}>
-                Accessories
-              </NavLink>
-            </li>
             <li>
               <NavLink to="/about" className={({ isActive }) => (isActive ? 'active' : '')}>
                 Our Story

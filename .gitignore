@@ -4,3 +4,6 @@ node_modules/
 *.db-journal
 *.log
 .DS_Store
+legacy_html_backup/
+.firebase/
+
