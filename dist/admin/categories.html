@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Category & Subcategory Management | Vintage Avenue Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .category-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      margin-bottom: 24px;
+      transition: border-color 0.2s ease;
+    }
+    .category-card:hover {
+      border-color: var(--color-gold);
+    }
+    .category-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 16px;
+    }
+    .category-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--color-gold);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .subcategory-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .subcategory-chip {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      color: var(--color-text-primary);
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .subcategory-chip .delete-sub-btn {
+      color: #ef4444;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: opacity 0.2s;
+    }
+    .subcategory-chip .delete-sub-btn:hover {
+      opacity: 0.8;
+    }
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-content {
+      background: var(--bg-secondary);
+      border: 1px solid var(--color-gold);
+      border-radius: var(--radius-md);
+      width: 90%;
+      max-width: 500px;
+      padding: 32px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Admin Navigation Header -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="/admin/dashboard.html" class="brand-logo">
+        <i class="fa-solid fa-gem"></i>
+        <span>VINTAGE AVENUE <small style="font-size: 0.8rem; color: var(--color-text-muted);">[ADMIN]</small></span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="/admin/dashboard.html">Dashboard</a></li>
+        <li><a href="/admin/products.html">Products</a></li>
+        <li><a href="/admin/categories.html" class="active">Categories</a></li>
+        <li><a href="/admin/orders.html">Orders</a></li>
+        <li><a href="/admin/customers.html">Recurrent VIPs</a></li>
+        <li><a href="/admin/sales.html">Sales Reports</a></li>
+        <li><a href="/admin/settings.html">Settings</a></li>
+        <li><a href="/index.html" target="_blank" style="color: var(--color-text-secondary);"><i class="fa-solid fa-external-link"></i> Live Store</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button id="admin-logout-btn" class="btn btn-outline btn-sm">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="padding: 40px 24px 80px;">
+    <div class="section-header">
+      <div>
+        <h1 class="section-title" style="font-size: 2.8rem; color: var(--color-gold);">Category & Subcategory Hierarchy</h1>
+        <p class="section-subtitle">Organize products into main categories and subcategories for the storefront catalog dropdown</p>
+      </div>
+      <div>
+        <button id="open-add-category-btn" class="btn btn-gold"><i class="fa-solid fa-plus"></i> Add Main Category</button>
+      </div>
+    </div>
+
+    <!-- Category Hierarchy Grid -->
+    <div id="category-hierarchy-container">
+      <!-- Dynamically populated via JS -->
+    </div>
+  </main>
+
+  <!-- Modal: Add / Edit Main Category -->
+  <div id="category-modal" class="modal-overlay">
+    <div class="modal-content">
+      <h3 id="category-modal-title" style="font-size: 1.6rem; color: var(--color-gold); margin-bottom: 16px;">
+        <i class="fa-solid fa-folder-plus"></i> Add Main Category
+      </h3>
+      <form id="category-form">
+        <input type="hidden" id="modal-category-id" value="">
+        <div class="form-group" style="margin-bottom: 20px;">
+          <label class="form-label" style="display: block; margin-bottom: 8px;">Category Name *</label>
+          <input type="text" id="modal-category-name" class="form-control" placeholder="e.g., Apparel, Watches, Accessories" required style="width: 100%;">
+        </div>
+        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+          <button type="button" class="btn btn-outline" id="close-category-modal-btn">Cancel</button>
+          <button type="submit" class="btn btn-gold">Save Category</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Add Subcategory -->
+  <div id="subcategory-modal" class="modal-overlay">
+    <div class="modal-content">
+      <h3 style="font-size: 1.6rem; color: var(--color-gold); margin-bottom: 16px;">
+        <i class="fa-solid fa-tags"></i> Add Subcategory
+      </h3>
+      <form id="subcategory-form">
+        <input type="hidden" id="modal-parent-category-id" value="">
+        <p id="modal-parent-category-label" style="color: var(--color-text-secondary); margin-bottom: 16px; font-weight: 600;"></p>
+        <div class="form-group" style="margin-bottom: 20px;">
+          <label class="form-label" style="display: block; margin-bottom: 8px;">Subcategory Name *</label>
+          <input type="text" id="modal-subcategory-name" class="form-control" placeholder="e.g., Jackets, Silk Scarves, Chronographs" required style="width: 100%;">
+        </div>
+        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+          <button type="button" class="btn btn-outline" id="close-subcategory-modal-btn">Cancel</button>
+          <button type="submit" class="btn btn-gold">Save Subcategory</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/admin.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const authenticated = await AdminAuth.checkAuthOrRedirect();
+      if (!authenticated) return;
+
+      const container = document.getElementById('category-hierarchy-container');
+      const categoryModal = document.getElementById('category-modal');
+      const subcategoryModal = document.getElementById('subcategory-modal');
+
+      const categoryForm = document.getElementById('category-form');
+      const subcategoryForm = document.getElementById('subcategory-form');
+
+      const modalCatId = document.getElementById('modal-category-id');
+      const modalCatName = document.getElementById('modal-category-name');
+      const modalCatTitle = document.getElementById('category-modal-title');
+
+      const modalParentCatId = document.getElementById('modal-parent-category-id');
+      const modalParentCatLabel = document.getElementById('modal-parent-category-label');
+      const modalSubName = document.getElementById('modal-subcategory-name');
+
+      const DEFAULT_CATEGORIES = [
+        { id: 1, name: "Apparel", slug: "apparel", subcategories: [{ id: 101, name: "Jackets" }, { id: 102, name: "Dresses" }, { id: 103, name: "Outerwear" }] },
+        { id: 2, name: "Timepieces", slug: "timepieces", subcategories: [{ id: 201, name: "Mechanical" }, { id: 202, name: "Quartz" }, { id: 203, name: "Pocket Watches" }] },
+        { id: 3, name: "Jewelry", slug: "jewelry", subcategories: [{ id: 301, name: "Rings" }, { id: 302, name: "Necklaces" }, { id: 303, name: "Bracelets" }] },
+        { id: 4, name: "Accessories", slug: "accessories", subcategories: [{ id: 401, name: "Scarves" }, { id: 402, name: "Handbags" }, { id: 403, name: "Sunglasses" }] },
+        { id: 5, name: "Collectibles", slug: "collectibles", subcategories: [{ id: 501, name: "Clocks" }, { id: 502, name: "Artifacts" }, { id: 503, name: "Sculptures" }] }
+      ];
+
+      function getStoredCategories() {
+        try {
+          const stored = localStorage.getItem('va_categories');
+          if (stored) return JSON.parse(stored);
+        } catch (e) {}
+        localStorage.setItem('va_categories', JSON.stringify(DEFAULT_CATEGORIES));
+        return DEFAULT_CATEGORIES;
+      }
+
+      function saveStoredCategories(cats) {
+        localStorage.setItem('va_categories', JSON.stringify(cats));
+      }
+
+      // Load Categories Tree
+      async function loadCategoryTree() {
+        try {
+          const res = await fetch('/api/categories');
+          if (res.ok) {
+            const data = await res.json();
+            renderTree(data.categories || getStoredCategories());
+            return;
+          }
+        } catch (err) {
+          console.warn('Backend API server offline, loading static category tree');
+        }
+
+        renderTree(getStoredCategories());
+      }
+
+      function renderTree(categories) {
+        if (!categories || categories.length === 0) {
+          container.innerHTML = `
+            <div style="text-align: center; color: var(--color-text-secondary); padding: 60px; background: var(--bg-secondary); border-radius: 8px;">
+              <i class="fa-solid fa-folder-open" style="font-size: 3rem; margin-bottom: 16px; opacity: 0.5;"></i>
+              <p>No main categories created yet. Click "Add Main Category" to get started.</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = categories.map(cat => `
+          <div class="category-card">
+            <div class="category-header">
+              <div>
+                <div class="category-title">
+                  <i class="fa-solid fa-folder" style="color: var(--color-gold);"></i>
+                  ${cat.name}
+                  <span style="font-size: 0.8rem; font-weight: 400; color: var(--color-text-muted);">(${cat.slug})</span>
+                </div>
+              </div>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <button class="btn btn-outline btn-sm edit-cat-btn" data-id="${cat.id}" data-name="${cat.name}">
+                  <i class="fa-solid fa-pen"></i> Edit
+                </button>
+                <button class="btn btn-danger btn-sm delete-cat-btn" data-id="${cat.id}" data-name="${cat.name}">
+                  <i class="fa-solid fa-trash"></i> Delete
+                </button>
+                <button class="btn btn-gold btn-sm add-sub-btn" data-id="${cat.id}" data-name="${cat.name}">
+                  <i class="fa-solid fa-plus"></i> Add Subcategory
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <div style="font-size: 0.85rem; text-transform: uppercase; color: var(--color-text-secondary); font-weight: 600; margin-bottom: 8px;">
+                Subcategories (${cat.subcategories ? cat.subcategories.length : 0}):
+              </div>
+              <div class="subcategory-list">
+                ${(!cat.subcategories || cat.subcategories.length === 0) ? `
+                  <span style="font-size: 0.9rem; color: var(--color-text-muted); italic;">No subcategories added yet.</span>
+                ` : cat.subcategories.map(sub => `
+                  <div class="subcategory-chip">
+                    <span>${sub.name}</span>
+                    <i class="fa-solid fa-xmark delete-sub-btn" data-id="${sub.id}" data-name="${sub.name}" title="Delete subcategory"></i>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        `).join('');
+
+        // Attach Event Listeners
+        document.querySelectorAll('.edit-cat-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const target = e.currentTarget;
+            modalCatId.value = target.getAttribute('data-id');
+            modalCatName.value = target.getAttribute('data-name');
+            modalCatTitle.innerHTML = `<i class="fa-solid fa-pen"></i> Edit Category`;
+            categoryModal.classList.add('active');
+          });
+        });
+
+        document.querySelectorAll('.delete-cat-btn').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            const target = e.currentTarget;
+            const id = target.getAttribute('data-id');
+            const name = target.getAttribute('data-name');
+            if (confirm(`Are you sure you want to delete category '${name}' and all its subcategories?`)) {
+              try {
+                const res = await fetch(`/api/categories/${id}`, {
+                  method: 'DELETE',
+                  headers: { 'Authorization': `Bearer ${AdminAuth.getToken()}` }
+                });
+                const data = await res.json();
+                if (res.ok) {
+                  showToast('Category deleted successfully', 'success');
+                  loadCategoryTree();
+                } else {
+                  showToast(data.error || 'Failed to delete category', 'danger');
+                }
+              } catch (err) {
+                showToast('Network error deleting category', 'danger');
+              }
+            }
+          });
+        });
+
+        document.querySelectorAll('.add-sub-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const target = e.currentTarget;
+            modalParentCatId.value = target.getAttribute('data-id');
+            modalParentCatLabel.textContent = `Parent Category: ${target.getAttribute('data-name')}`;
+            modalSubName.value = '';
+            subcategoryModal.classList.add('active');
+          });
+        });
+
+        document.querySelectorAll('.delete-sub-btn').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            const id = e.target.getAttribute('data-id');
+            const name = e.target.getAttribute('data-name');
+            if (confirm(`Are you sure you want to delete subcategory '${name}'?`)) {
+              try {
+                const res = await fetch(`/api/categories/subcategories/${id}`, {
+                  method: 'DELETE',
+                  headers: { 'Authorization': `Bearer ${AdminAuth.getToken()}` }
+                });
+                const data = await res.json();
+                if (res.ok) {
+                  showToast('Subcategory deleted', 'success');
+                  loadCategoryTree();
+                } else {
+                  showToast(data.error || 'Failed to delete subcategory', 'danger');
+                }
+              } catch (err) {
+                showToast('Network error deleting subcategory', 'danger');
+              }
+            }
+          });
+        });
+      }
+
+      // Open Add Main Category Modal
+      document.getElementById('open-add-category-btn').addEventListener('click', () => {
+        modalCatId.value = '';
+        modalCatName.value = '';
+        modalCatTitle.innerHTML = `<i class="fa-solid fa-folder-plus"></i> Add Main Category`;
+        categoryModal.classList.add('active');
+      });
+
+      document.getElementById('close-category-modal-btn').addEventListener('click', () => {
+        categoryModal.classList.remove('active');
+      });
+
+      document.getElementById('close-subcategory-modal-btn').addEventListener('click', () => {
+        subcategoryModal.classList.remove('active');
+      });
+
+      // Submit Category Form (Create or Update)
+      categoryForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = modalCatId.value;
+        const name = modalCatName.value.trim();
+
+        if (!name) return;
+
+        try {
+          const url = id ? `/api/categories/${id}` : '/api/categories';
+          const method = id ? 'PUT' : 'POST';
+          const res = await fetch(url, {
+            method,
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${AdminAuth.getToken()}`
+            },
+            body: JSON.stringify({ name })
+          });
+          if (res.ok) {
+            showToast(id ? 'Category updated' : 'Category created', 'success');
+            categoryModal.classList.remove('active');
+            loadCategoryTree();
+            return;
+          }
+        } catch (err) {}
+
+        // Static hosting fallback
+        let cats = getStoredCategories();
+        if (id) {
+          const cat = cats.find(c => String(c.id) === String(id));
+          if (cat) cat.name = name;
+        } else {
+          cats.push({
+            id: Date.now(),
+            name: name,
+            slug: name.toLowerCase().replace(/[^a-z0-9]/g, '-'),
+            subcategories: []
+          });
+        }
+        saveStoredCategories(cats);
+        showToast(id ? 'Category updated' : 'Category created', 'success');
+        categoryModal.classList.remove('active');
+        loadCategoryTree();
+      });
+
+      // Submit Subcategory Form
+      subcategoryForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const categoryId = modalParentCatId.value;
+        const name = modalSubName.value.trim();
+
+        if (!categoryId || !name) return;
+
+        try {
+          const res = await fetch(`/api/categories/${categoryId}/subcategories`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${AdminAuth.getToken()}`
+            },
+            body: JSON.stringify({ name })
+          });
+          if (res.ok) {
+            showToast('Subcategory created', 'success');
+            subcategoryModal.classList.remove('active');
+            loadCategoryTree();
+            return;
+          }
+        } catch (err) {}
+
+        // Static hosting fallback
+        let cats = getStoredCategories();
+        const parent = cats.find(c => String(c.id) === String(categoryId));
+        if (parent) {
+          if (!parent.subcategories) parent.subcategories = [];
+          parent.subcategories.push({ id: Date.now(), name: name });
+          saveStoredCategories(cats);
+        }
+        showToast('Subcategory created', 'success');
+        subcategoryModal.classList.remove('active');
+        loadCategoryTree();
+      });
+
+      loadCategoryTree();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recurrent VIP Clients | Vintage Avenue Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Admin Navigation Header -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="/admin/dashboard.html" class="brand-logo">
+        <i class="fa-solid fa-gem"></i>
+        <span>VINTAGE AVENUE <small style="font-size: 0.8rem; color: var(--color-text-muted);">[ADMIN]</small></span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="/admin/dashboard.html">Dashboard</a></li>
+        <li><a href="/admin/products.html">Products</a></li>
+        <li><a href="/admin/categories.html">Categories</a></li>
+        <li><a href="/admin/orders.html">Orders</a></li>
+        <li><a href="/admin/customers.html" class="active">Recurrent VIPs</a></li>
+        <li><a href="/admin/sales.html">Sales Reports</a></li>
+        <li><a href="/admin/settings.html">Settings</a></li>
+        <li><a href="/index.html" target="_blank" style="color: var(--color-text-secondary);"><i class="fa-solid fa-external-link"></i> Live Store</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button id="admin-logout-btn" class="btn btn-outline btn-sm">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="padding: 40px 24px 80px;">
+    <div class="section-header">
+      <div>
+        <h1 class="section-title" style="font-size: 2.8rem; color: var(--color-gold);">Recurrent & VIP Client Directory</h1>
+        <p class="section-subtitle">Track repeat clients, purchase histories, and total lifetime spend</p>
+      </div>
+    </div>
+
+    <!-- Filter Toolbar -->
+    <div class="filter-toolbar">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="cust-search-input" placeholder="Search customer name, phone number, or email...">
+      </div>
+
+      <div class="filter-group">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--color-gold); font-weight: 600;">
+          <input type="checkbox" id="cust-recurrent-only" style="accent-color: var(--color-gold);">
+          Show Recurrent VIP Clients Only (>1 Order)
+        </label>
+      </div>
+    </div>
+
+    <!-- Data Table Container -->
+    <div class="data-table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Customer Name</th>
+            <th>Obligatory Phone</th>
+            <th>Email</th>
+            <th>Total Orders</th>
+            <th>Lifetime Spend</th>
+            <th>Client Status</th>
+            <th>Joined Date</th>
+          </tr>
+        </thead>
+        <tbody id="customers-table-body">
+          <!-- Populated via JS -->
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script src="/js/admin.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const authenticated = await AdminAuth.checkAuthOrRedirect();
+      if (!authenticated) return;
+
+      const tableBody = document.getElementById('customers-table-body');
+      const searchInput = document.getElementById('cust-search-input');
+      const recurrentCheckbox = document.getElementById('cust-recurrent-only');
+
+      const DEFAULT_CUSTOMERS = [
+        { id: 1, name: "Lubna Armawed", phone: "+961 70 123 456", email: "lubna@vintage.com", order_count: 5, total_spent: 2450.00, is_recurrent: true, created_at: "2026-08-10T10:00:00Z" },
+        { id: 2, name: "Hassan Shamso", phone: "+961 03 987 654", email: "hassan@vintage.com", order_count: 3, total_spent: 1850.00, is_recurrent: true, created_at: "2026-08-15T14:20:00Z" },
+        { id: 3, name: "Nour Al-Huda", phone: "+961 71 555 333", email: "nour@example.com", order_count: 1, total_spent: 320.00, is_recurrent: false, created_at: "2026-09-01T09:45:00Z" }
+      ];
+
+      async function loadCustomers() {
+        const search = searchInput.value.trim().toLowerCase();
+        const recurrentOnly = recurrentCheckbox.checked;
+
+        try {
+          const query = new URLSearchParams();
+          if (search) query.append('search', search);
+          if (recurrentOnly) query.append('recurrentOnly', 'true');
+
+          const res = await fetch(`/api/customers?${query.toString()}`, {
+            headers: { 'Authorization': `Bearer ${AdminAuth.getToken()}` }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            renderCustomers(data.customers || []);
+            return;
+          }
+        } catch (err) {
+          console.warn('Backend API server offline, rendering static VIP clients list');
+        }
+
+        let customers = DEFAULT_CUSTOMERS;
+        try {
+          const stored = localStorage.getItem('va_customers');
+          if (stored) customers = JSON.parse(stored);
+        } catch (e) {}
+
+        if (recurrentOnly) {
+          customers = customers.filter(c => c.is_recurrent || c.order_count > 1);
+        }
+        if (search) {
+          customers = customers.filter(c => 
+            c.name.toLowerCase().includes(search) || 
+            c.phone.includes(search) || 
+            (c.email && c.email.toLowerCase().includes(search))
+          );
+        }
+
+        renderCustomers(customers);
+      }
+
+      function renderCustomers(customers) {
+        if (customers.length === 0) {
+          tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--color-text-secondary); padding: 40px;">No customers match criteria.</td></tr>`;
+          return;
+        }
+
+        tableBody.innerHTML = customers.map(c => `
+          <tr>
+            <td><strong>${c.name}</strong></td>
+            <td><strong style="color: var(--color-gold);">${c.phone}</strong></td>
+            <td>${c.email ? c.email : '<span style="color: var(--color-text-muted);">Not Provided</span>'}</td>
+            <td><strong>${c.order_count}</strong> orders</td>
+            <td style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700; color: var(--color-gold);">$${c.total_spent.toFixed(2)}</td>
+            <td>
+              ${c.is_recurrent ? `
+                <span class="badge-status Completed"><i class="fa-solid fa-crown"></i> Recurrent VIP</span>
+              ` : `
+                <span class="badge-status Processing">New Client</span>
+              `}
+            </td>
+            <td>${new Date(c.created_at).toLocaleDateString()}</td>
+          </tr>
+        `).join('');
+      }
+
+      searchInput.addEventListener('input', loadCustomers);
+      recurrentCheckbox.addEventListener('change', loadCustomers);
+
+      loadCustomers();
+    });
+  </script>
+</body>
+</html>

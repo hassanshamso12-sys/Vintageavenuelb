@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Management | Vintage Avenue Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Admin Navigation Header -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="/admin/dashboard.html" class="brand-logo">
+        <i class="fa-solid fa-gem"></i>
+        <span>VINTAGE AVENUE <small style="font-size: 0.8rem; color: var(--color-text-muted);">[ADMIN]</small></span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="/admin/dashboard.html">Dashboard</a></li>
+        <li><a href="/admin/products.html">Products</a></li>
+        <li><a href="/admin/categories.html">Categories</a></li>
+        <li><a href="/admin/orders.html" class="active">Orders</a></li>
+        <li><a href="/admin/customers.html">Recurrent VIPs</a></li>
+        <li><a href="/admin/sales.html">Sales Reports</a></li>
+        <li><a href="/admin/settings.html">Settings</a></li>
+        <li><a href="/index.html" target="_blank" style="color: var(--color-text-secondary);"><i class="fa-solid fa-external-link"></i> Live Store</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button id="admin-logout-btn" class="btn btn-outline btn-sm">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="padding: 40px 24px 80px;">
+    <div class="section-header">
+      <div>
+        <h1 class="section-title" style="font-size: 2.8rem; color: var(--color-gold);">Customer Orders & Fulfilment</h1>
+        <p class="section-subtitle">Track orders, update delivery & payment statuses, generate PDF invoices, and issue manual discounts</p>
+      </div>
+    </div>
+
+    <!-- Filter Toolbar -->
+    <div class="filter-toolbar">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="admin-order-search" placeholder="Search customer name, phone number, email, or order ID...">
+      </div>
+
+      <div class="filter-group">
+        <select id="admin-delivery-status-filter" class="form-control">
+          <option value="All">All Delivery Statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="Dispatched">Dispatched</option>
+          <option value="In Transit">In Transit</option>
+          <option value="Delivered">Delivered</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+
+        <select id="admin-payment-status-filter" class="form-control">
+          <option value="All">All Payment Statuses</option>
+          <option value="Unpaid">Unpaid</option>
+          <option value="Paid">Paid</option>
+          <option value="Refunded">Refunded</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Data Table Container -->
+    <div class="data-table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Customer Contact</th>
+            <th>Payment Method</th>
+            <th>Total Amount</th>
+            <th>Delivery Status</th>
+            <th>Payment Status</th>
+            <th>Order Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="admin-orders-table-body">
+          <!-- Dynamically populated via public/js/orders.js -->
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- In-App Custom Discount Modal -->
+  <div id="discount-modal-overlay" class="modal-overlay">
+    <div class="modal-content">
+      <h3 style="font-size: 1.6rem; color: var(--color-gold); margin-bottom: 16px;">
+        <i class="fa-solid fa-tag"></i> Apply Manual Order Discount
+      </h3>
+      <div id="modal-order-info" style="color: var(--color-text-secondary); margin-bottom: 20px; font-size: 0.95rem; background: var(--bg-secondary); padding: 12px; border-radius: 6px; border: 1px solid var(--border-color);"></div>
+      
+      <div style="margin-bottom: 24px;">
+        <label style="display: block; font-size: 0.85rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 8px;">
+          Manual Discount Amount ($)
+        </label>
+        <input type="number" id="modal-discount-input" step="0.01" min="0" class="form-control" placeholder="0.00" style="width: 100%; border-color: var(--color-gold); font-size: 1.1rem;">
+      </div>
+
+      <div style="display: flex; gap: 12px; justify-content: flex-end;">
+        <button id="modal-cancel-btn" class="btn btn-outline btn-sm">Cancel</button>
+        <button id="modal-apply-btn" class="btn btn-gold btn-sm">Apply Discount</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/admin.js"></script>
+  <script src="/js/orders.js"></script>
+</body>
+</html>
