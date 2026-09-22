@@ -81,6 +81,8 @@ export const ProductDetailPage = () => {
   const [product, setProduct] = useState(null);
   const [selectedImg, setSelectedImg] = useState('');
   const [qtyInput, setQtyInput] = useState(1);
+  const [showZoomModal, setShowZoomModal] = useState(false);
+  const [isMagnified, setIsMagnified] = useState(false);
 
   useEffect(() => {
     let allProds = DEFAULT_PRODUCTS;
@@ -119,6 +121,21 @@ export const ProductDetailPage = () => {
     ? product.images
     : [product.image_url || '/uploads/placeholder.jpg'];
 
+  const currentPhoto = selectedImg || allImages[0];
+  const currentIndex = allImages.indexOf(currentPhoto);
+
+  const handlePrevImage = (e) => {
+    e.stopPropagation();
+    const prevIdx = (currentIndex - 1 + allImages.length) % allImages.length;
+    setSelectedImg(allImages[prevIdx]);
+  };
+
+  const handleNextImage = (e) => {
+    e.stopPropagation();
+    const nextIdx = (currentIndex + 1) % allImages.length;
+    setSelectedImg(allImages[nextIdx]);
+  };
+
   const handleAddToCart = () => {
     addToCart(product, qtyInput);
     showToast(`Added ${product.name} (${qtyInput}) to your bag!`, 'success');
@@ -135,18 +152,58 @@ export const ProductDetailPage = () => {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '48px', alignItems: 'start' }}>
         {/* Gallery Section */}
         <div>
-          <div style={{ position: 'relative', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', overflow: 'hidden', marginBottom: '16px', boxShadow: 'var(--shadow-sm)' }}>
+          <div style={{
+            position: 'relative',
+            background: '#0d0f15',
+            border: '1px solid var(--border-color)',
+            borderRadius: 'var(--radius-md)',
+            overflow: 'hidden',
+            marginBottom: '16px',
+            boxShadow: 'var(--shadow-sm)',
+            height: '460px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '16px'
+          }}>
             <img
-              src={selectedImg || allImages[0]}
+              src={currentPhoto}
               alt={product.name}
-              style={{ width: '100%', height: '460px', objectFit: 'cover', display: 'block', transition: 'all 0.3s ease' }}
+              style={{
+                maxWidth: '100%',
+                maxHeight: '100%',
+                objectFit: 'contain',
+                display: 'block',
+                transition: 'transform 0.3s ease',
+                cursor: 'zoom-in'
+              }}
+              onClick={() => setShowZoomModal(true)}
             />
+
             {product.era && (
-              <span className="badge-era" style={{ position: 'absolute', top: '16px', left: '16px' }}>{product.era}</span>
+              <span className="badge-era" style={{ position: 'absolute', top: '16px', left: '16px', zIndex: 5 }}>{product.era}</span>
             )}
-            <span className={`badge-stock ${product.quantity === 0 ? 'out-of-stock' : (product.quantity <= 3 ? 'low-stock' : 'in-stock')}`} style={{ position: 'absolute', top: '16px', right: '16px' }}>
+            <span className={`badge-stock ${product.quantity === 0 ? 'out-of-stock' : (product.quantity <= 3 ? 'low-stock' : 'in-stock')}`} style={{ position: 'absolute', top: '16px', right: '16px', zIndex: 5 }}>
               {product.quantity > 0 ? `${product.quantity} units available` : 'Vaulted'}
             </span>
+
+            {/* Magnifier Button */}
+            <button
+              onClick={() => setShowZoomModal(true)}
+              className="btn btn-gold btn-sm"
+              style={{
+                position: 'absolute',
+                bottom: '16px',
+                right: '16px',
+                zIndex: 10,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
+              }}
+            >
+              <i className="fa-solid fa-magnifying-glass-plus"></i> Magnify Image
+            </button>
           </div>
 
           {/* Thumbnails row */}
@@ -166,10 +223,11 @@ export const ProductDetailPage = () => {
                       borderRadius: '8px',
                       overflow: 'hidden',
                       cursor: 'pointer',
-                      border: (selectedImg === img || (!selectedImg && idx === 0)) ? '2px solid var(--color-gold)' : '1px solid var(--border-color)',
-                      opacity: (selectedImg === img || (!selectedImg && idx === 0)) ? 1 : 0.6,
-                      boxShadow: (selectedImg === img) ? '0 0 12px rgba(212, 175, 55, 0.4)' : 'none',
-                      transition: 'all 0.2s ease'
+                      border: (currentPhoto === img) ? '2px solid var(--color-gold)' : '1px solid var(--border-color)',
+                      opacity: (currentPhoto === img) ? 1 : 0.6,
+                      boxShadow: (currentPhoto === img) ? '0 0 12px rgba(212, 175, 55, 0.4)' : 'none',
+                      transition: 'all 0.2s ease',
+                      background: '#0d0f15'
                     }}
                   >
                     <img src={img} alt={`Thumbnail ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -256,7 +314,7 @@ export const ProductDetailPage = () => {
             </div>
             <div>
               <i className="fa-solid fa-shield-halved" style={{ color: 'var(--color-gold)', fontSize: '1.5rem', marginBottom: '8px' }}></i>
-              <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Insured Express Transit</div>
+              <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Insured Courier Transit</div>
             </div>
             <div>
               <i className="fa-solid fa-crown" style={{ color: 'var(--color-gold)', fontSize: '1.5rem', marginBottom: '8px' }}></i>
@@ -265,6 +323,95 @@ export const ProductDetailPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Lightbox Image Magnifier Modal */}
+      {showZoomModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.94)',
+            backdropFilter: 'blur(8px)',
+            zIndex: 99999,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '24px'
+          }}
+          onClick={() => { setShowZoomModal(false); setIsMagnified(false); }}
+        >
+          {/* Top Controls Toolbar */}
+          <div style={{ position: 'absolute', top: '24px', right: '24px', display: 'flex', gap: '16px', alignItems: 'center', zIndex: 100000 }}>
+            <button
+              onClick={(e) => { e.stopPropagation(); setIsMagnified(!isMagnified); }}
+              className="btn btn-outline btn-sm"
+              style={{ color: '#fff', borderColor: 'rgba(255,255,255,0.3)', background: 'rgba(0,0,0,0.5)' }}
+            >
+              <i className={`fa-solid ${isMagnified ? 'fa-magnifying-glass-minus' : 'fa-magnifying-glass-plus'}`}></i> {isMagnified ? 'Reset 1x' : 'Zoom 2x'}
+            </button>
+            <button
+              onClick={() => { setShowZoomModal(false); setIsMagnified(false); }}
+              style={{ background: 'none', border: 'none', color: '#fff', fontSize: '2.4rem', cursor: 'pointer', lineHeight: 1 }}
+            >
+              &times;
+            </button>
+          </div>
+
+          {/* Prev Arrow */}
+          {allImages.length > 1 && (
+            <button
+              onClick={handlePrevImage}
+              style={{ position: 'absolute', left: '24px', background: 'rgba(0,0,0,0.6)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', width: '48px', height: '48px', borderRadius: '50%', cursor: 'pointer', fontSize: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100000 }}
+            >
+              ‹
+            </button>
+          )}
+
+          {/* Image Container */}
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              maxHeight: '85vh',
+              maxWidth: '90vw',
+              overflow: 'auto',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: isMagnified ? 'zoom-out' : 'zoom-in'
+            }}
+          >
+            <img
+              src={currentPhoto}
+              alt={product.name}
+              onClick={() => setIsMagnified(!isMagnified)}
+              style={{
+                maxHeight: isMagnified ? 'none' : '82vh',
+                maxWidth: isMagnified ? 'none' : '88vw',
+                transform: isMagnified ? 'scale(1.8)' : 'scale(1)',
+                transformOrigin: 'center center',
+                transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                display: 'block',
+                borderRadius: '8px'
+              }}
+            />
+          </div>
+
+          {/* Next Arrow */}
+          {allImages.length > 1 && (
+            <button
+              onClick={handleNextImage}
+              style={{ position: 'absolute', right: '24px', background: 'rgba(0,0,0,0.6)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', width: '48px', height: '48px', borderRadius: '50%', cursor: 'pointer', fontSize: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100000 }}
+            >
+              ›
+            </button>
+          )}
+
+          <div style={{ position: 'absolute', bottom: '24px', color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}>
+            Photo {currentIndex + 1} of {allImages.length} • Click image to toggle 2x zoom magnification
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -66,7 +66,7 @@ export const HomePage = () => {
           </div>
           <div>
             <i className="fa-solid fa-plane-shield" style={{ fontSize: '2.2rem', color: 'var(--color-gold)', marginBottom: '16px' }}></i>
-            <h4 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>Insured Worldwide Delivery</h4>
+            <h4 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>Insured Courier Dispatch</h4>
             <p style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)' }}>Fully tracked and insured express courier delivery straight to your doorstep.</p>
           </div>
           <div>
