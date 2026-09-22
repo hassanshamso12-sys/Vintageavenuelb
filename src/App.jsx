@@ -31,13 +31,34 @@ import { AdminSettingsPage } from './pages/admin/AdminSettingsPage';
 
 import './styles/style.css';
 
+import { useAuth } from './context/AuthContext';
+
+// Protected Route Wrapper for Admin Pages
+const ProtectedAdminRoute = ({ children }) => {
+  const { isAuthenticated } = useAuth();
+  const location = useLocation();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/admin/login" state={{ from: location }} replace />;
+  }
+
+  return children;
+};
+
 const AppLayout = () => {
   const location = useLocation();
+  const { isAuthenticated } = useAuth();
+
   const isAdminPath = location.pathname.startsWith('/admin');
+  const isLoginPage = location.pathname === '/admin/login';
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      {isAdminPath ? <AdminNavbar /> : <Navbar />}
+      {isAdminPath ? (
+        isAuthenticated && !isLoginPage ? <AdminNavbar /> : null
+      ) : (
+        <Navbar />
+      )}
       <CartDrawer />
       <main style={{ flex: 1 }}>
         <Routes>
@@ -51,15 +72,17 @@ const AppLayout = () => {
           {/* Admin Routes */}
           <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="/admin/login" element={<AdminLoginPage />} />
-          <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
-          <Route path="/admin/products" element={<AdminProductsPage />} />
-          <Route path="/admin/products/new" element={<AdminAddProductPage />} />
-          <Route path="/admin/products/edit/:id" element={<AdminEditProductPage />} />
-          <Route path="/admin/categories" element={<AdminCategoriesPage />} />
-          <Route path="/admin/orders" element={<AdminOrdersPage />} />
-          <Route path="/admin/customers" element={<AdminCustomersPage />} />
-          <Route path="/admin/sales" element={<AdminSalesPage />} />
-          <Route path="/admin/settings" element={<AdminSettingsPage />} />
+
+          {/* Protected Security Admin Routes */}
+          <Route path="/admin/dashboard" element={<ProtectedAdminRoute><AdminDashboardPage /></ProtectedAdminRoute>} />
+          <Route path="/admin/products" element={<ProtectedAdminRoute><AdminProductsPage /></ProtectedAdminRoute>} />
+          <Route path="/admin/products/new" element={<ProtectedAdminRoute><AdminAddProductPage /></ProtectedAdminRoute>} />
+          <Route path="/admin/products/edit/:id" element={<ProtectedAdminRoute><AdminEditProductPage /></ProtectedAdminRoute>} />
+          <Route path="/admin/categories" element={<ProtectedAdminRoute><AdminCategoriesPage /></ProtectedAdminRoute>} />
+          <Route path="/admin/orders" element={<ProtectedAdminRoute><AdminOrdersPage /></ProtectedAdminRoute>} />
+          <Route path="/admin/customers" element={<ProtectedAdminRoute><AdminCustomersPage /></ProtectedAdminRoute>} />
+          <Route path="/admin/sales" element={<ProtectedAdminRoute><AdminSalesPage /></ProtectedAdminRoute>} />
+          <Route path="/admin/settings" element={<ProtectedAdminRoute><AdminSettingsPage /></ProtectedAdminRoute>} />
         </Routes>
       </main>
       {!isAdminPath && <Footer />}
