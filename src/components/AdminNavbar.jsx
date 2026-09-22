@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useSettings } from '../context/SettingsContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -7,7 +7,28 @@ export const AdminNavbar = () => {
   const { settings } = useSettings();
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [unseenCount, setUnseenCount] = useState(0);
+
+  useEffect(() => {
+    checkUnseenOrders();
+    const interval = setInterval(checkUnseenOrders, 3000);
+    return () => clearInterval(interval);
+  }, [location.pathname]);
+
+  const checkUnseenOrders = () => {
+    try {
+      const saved = localStorage.getItem('va_orders');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        const count = parsed.filter(o => o.seen === false).length;
+        setUnseenCount(count);
+      } else {
+        setUnseenCount(1); // Demo default unseen order ORD-110293
+      }
+    } catch (e) {}
+  };
 
   const handleLogout = () => {
     logout();
@@ -52,8 +73,24 @@ export const AdminNavbar = () => {
               </NavLink>
             </li>
             <li>
-              <NavLink to="/admin/orders" className={({ isActive }) => (isActive ? 'active' : '')}>
+              <NavLink to="/admin/orders" className={({ isActive }) => (isActive ? 'active' : '')} style={{ position: 'relative' }}>
                 Orders
+                {unseenCount > 0 && (
+                  <span
+                    style={{
+                      background: '#ef4444',
+                      color: '#ffffff',
+                      fontSize: '0.68rem',
+                      fontWeight: 800,
+                      borderRadius: '10px',
+                      padding: '2px 7px',
+                      marginLeft: '6px',
+                      boxShadow: '0 0 8px rgba(239, 68, 68, 0.6)'
+                    }}
+                  >
+                    {unseenCount}
+                  </span>
+                )}
               </NavLink>
             </li>
             <li>
@@ -117,7 +154,16 @@ export const AdminNavbar = () => {
             <li><NavLink to="/admin/dashboard" onClick={() => setMobileOpen(false)}>Dashboard</NavLink></li>
             <li><NavLink to="/admin/products" onClick={() => setMobileOpen(false)}>Products</NavLink></li>
             <li><NavLink to="/admin/categories" onClick={() => setMobileOpen(false)}>Categories</NavLink></li>
-            <li><NavLink to="/admin/orders" onClick={() => setMobileOpen(false)}>Orders</NavLink></li>
+            <li>
+              <NavLink to="/admin/orders" onClick={() => setMobileOpen(false)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span>Orders</span>
+                {unseenCount > 0 && (
+                  <span style={{ background: '#ef4444', color: '#fff', fontSize: '0.7rem', padding: '2px 8px', borderRadius: '10px' }}>
+                    {unseenCount} NEW
+                  </span>
+                )}
+              </NavLink>
+            </li>
             <li><NavLink to="/admin/customers" onClick={() => setMobileOpen(false)}>VIPs</NavLink></li>
             <li><NavLink to="/admin/sales" onClick={() => setMobileOpen(false)}>Sales Reports</NavLink></li>
             <li><NavLink to="/admin/settings" onClick={() => setMobileOpen(false)}>Settings</NavLink></li>

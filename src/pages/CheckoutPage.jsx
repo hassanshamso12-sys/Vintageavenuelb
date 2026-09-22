@@ -54,7 +54,8 @@ export const CheckoutPage = () => {
       total_amount: finalCalculatedTotal,
       payment_method: paymentMethod === 'whish' ? 'Whish Money Transfer' : 'Cash on Delivery',
       status: 'Pending',
-      tracking_status: 'Processing'
+      tracking_status: 'Processing',
+      seen: false
     };
 
     // Save into localStorage va_orders

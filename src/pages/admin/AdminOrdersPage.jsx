@@ -4,9 +4,9 @@ import { useSettings } from '../../context/SettingsContext';
 import { generateInvoicePDF } from '../../utils/generateInvoicePDF';
 
 const DEFAULT_ORDERS = [
-  { id: 'ORD-982104', customer_name: 'Hassan Shamso', customer_phone: '+961 70 123 456', customer_email: 'hassan@example.com', total_amount: 1850.00, status: 'Completed', tracking_status: 'Delivered', payment_method: 'Whish Money Transfer', order_date: '2026-09-22T14:30:00Z', delivery_method: 'Express Vault Concierge', delivery_fee: 25.00 },
-  { id: 'ORD-451209', customer_name: 'Karim Al-Hassan', customer_phone: '+961 03 987 654', customer_email: 'N/A', total_amount: 250.00, status: 'Processing', tracking_status: 'Dispatched / In Transit', payment_method: 'Cash on Delivery', order_date: '2026-09-22T11:15:00Z', delivery_method: 'Standard Courier', delivery_fee: 10.00 },
-  { id: 'ORD-110293', customer_name: 'Nour El-Din', customer_phone: '+961 71 456 789', customer_email: 'nour@example.com', total_amount: 1200.00, status: 'Pending', tracking_status: 'Processing', payment_method: 'Whish Money Transfer', order_date: '2026-09-21T18:45:00Z', delivery_method: 'Standard Courier', delivery_fee: 0.00 }
+  { id: 'ORD-982104', customer_name: 'Hassan Shamso', customer_phone: '+961 70 123 456', customer_email: 'hassan@example.com', total_amount: 1850.00, status: 'Completed', tracking_status: 'Delivered', payment_method: 'Whish Money Transfer', order_date: '2026-09-22T14:30:00Z', delivery_method: 'Express Vault Concierge', delivery_fee: 25.00, seen: true },
+  { id: 'ORD-451209', customer_name: 'Karim Al-Hassan', customer_phone: '+961 03 987 654', customer_email: 'N/A', total_amount: 250.00, status: 'Processing', tracking_status: 'Dispatched / In Transit', payment_method: 'Cash on Delivery', order_date: '2026-09-22T11:15:00Z', delivery_method: 'Standard Courier', delivery_fee: 10.00, seen: true },
+  { id: 'ORD-110293', customer_name: 'Nour El-Din', customer_phone: '+961 71 456 789', customer_email: 'nour@example.com', total_amount: 1200.00, status: 'Pending', tracking_status: 'Processing', payment_method: 'Whish Money Transfer', order_date: '2026-09-21T18:45:00Z', delivery_method: 'Standard Courier', delivery_fee: 0.00, seen: false }
 ];
 
 export const AdminOrdersPage = () => {
@@ -34,8 +34,15 @@ export const AdminOrdersPage = () => {
     setOrders(saved ? JSON.parse(saved) : DEFAULT_ORDERS);
   };
 
+  const handleMarkAllSeen = () => {
+    const updated = orders.map(o => ({ ...o, seen: true }));
+    setOrders(updated);
+    localStorage.setItem('va_orders', JSON.stringify(updated));
+    showToast('All new orders marked as seen!', 'success');
+  };
+
   const handleStatusChange = (orderId, newStatus) => {
-    const updated = orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o);
+    const updated = orders.map(o => o.id === orderId ? { ...o, status: newStatus, seen: true } : o);
     setOrders(updated);
     localStorage.setItem('va_orders', JSON.stringify(updated));
 
@@ -49,7 +56,7 @@ export const AdminOrdersPage = () => {
   };
 
   const handleTrackingChange = (orderId, newTrackingStatus) => {
-    const updated = orders.map(o => o.id === orderId ? { ...o, tracking_status: newTrackingStatus } : o);
+    const updated = orders.map(o => o.id === orderId ? { ...o, tracking_status: newTrackingStatus, seen: true } : o);
     setOrders(updated);
     localStorage.setItem('va_orders', JSON.stringify(updated));
 
@@ -62,9 +69,11 @@ export const AdminOrdersPage = () => {
     showToast(`Order ${orderId} delivery tracking status updated to '${newTrackingStatus}'!`, 'success');
   };
 
+  const unseenCount = orders.filter(o => o.seen === false).length;
+
   return (
     <div className="container" style={{ padding: '40px 24px 80px' }}>
-      <div className="section-header" style={{ marginBottom: '32px' }}>
+      <div className="section-header" style={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
         <div>
           <h1 className="section-title" style={{ fontSize: '2.8rem', color: 'var(--color-gold)' }}>
             Order Management & Delivery Tracking
@@ -73,6 +82,12 @@ export const AdminOrdersPage = () => {
             Track client orders, payment verification, fulfillment status, and generate official PDF invoices
           </p>
         </div>
+
+        {unseenCount > 0 && (
+          <button onClick={handleMarkAllSeen} className="btn btn-gold btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+            <i className="fa-solid fa-check-double"></i> Mark All ({unseenCount}) As Seen
+          </button>
+        )}
       </div>
 
       <div className="data-table-container" style={{ overflowX: 'auto' }}>
@@ -97,8 +112,15 @@ export const AdminOrdersPage = () => {
               </tr>
             ) : (
               orders.map(o => (
-                <tr key={o.id}>
-                  <td><code>{o.id}</code></td>
+                <tr key={o.id} style={o.seen === false ? { background: 'rgba(212, 175, 55, 0.06)' } : {}}>
+                  <td>
+                    <code>{o.id}</code>
+                    {o.seen === false && (
+                      <span style={{ background: '#ef4444', color: '#fff', fontSize: '0.65rem', fontWeight: 800, padding: '2px 6px', borderRadius: '4px', marginLeft: '6px', textTransform: 'uppercase' }}>
+                        NEW
+                      </span>
+                    )}
+                  </td>
                   <td>
                     <strong>{o.customer_name}</strong>
                     <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
