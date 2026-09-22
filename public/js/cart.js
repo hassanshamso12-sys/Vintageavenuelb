@@ -323,21 +323,26 @@ document.addEventListener('DOMContentLoaded', () => {
   const dropdownItems = document.querySelectorAll('.has-dropdown');
   dropdownItems.forEach(item => {
     const link = item.querySelector('a');
+    const dropdown = item.querySelector('.nav-dropdown');
     if (!link) return;
 
     link.addEventListener('click', (e) => {
-      // If clicking directly on arrow icon OR if dropdown is not active yet, toggle dropdown
       const isChevron = e.target.classList.contains('fa-chevron-down') || e.target.closest('.fa-chevron-down');
-      const isActive = item.classList.contains('active');
+      const isActive = item.classList.contains('active') || (dropdown && dropdown.classList.contains('show'));
 
       if (isChevron || !isActive) {
         e.preventDefault();
         e.stopPropagation();
-        // Toggle active on target item, close others
         dropdownItems.forEach(other => {
-          if (other !== item) other.classList.remove('active');
+          if (other !== item) {
+            other.classList.remove('active');
+            const otherDD = other.querySelector('.nav-dropdown');
+            if (otherDD) otherDD.classList.remove('show');
+          }
         });
+
         item.classList.toggle('active');
+        if (dropdown) dropdown.classList.toggle('show');
       }
     });
   });
@@ -345,7 +350,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // Close dropdown when clicking outside
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.has-dropdown')) {
-      dropdownItems.forEach(item => item.classList.remove('active'));
+      dropdownItems.forEach(item => {
+        item.classList.remove('active');
+        const dropdown = item.querySelector('.nav-dropdown');
+        if (dropdown) dropdown.classList.remove('show');
+      });
     }
   });
 
