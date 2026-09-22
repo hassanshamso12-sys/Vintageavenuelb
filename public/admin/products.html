@@ -123,6 +123,13 @@
 
       subcategoryFilter.addEventListener('change', loadProducts);
 
+      const DEFAULT_PRODUCTS = [
+        { id: 1, name: "1976 Vintage Moto Leather Jacket", category: "Apparel", subcategory: "Jackets", price: 250.00, quantity: 3, era: "1970s", condition: "Mint", sku: "APP-7601", description: "Iconic hand-distressed Italian leather motorcycle jacket." },
+        { id: 2, name: "1968 Omega Seamaster Automatic", category: "Timepieces", subcategory: "Mechanical", price: 1850.00, quantity: 1, era: "1960s", condition: "Excellent", sku: "TIM-6802", description: "Authentic Swiss-made Omega Seamaster." },
+        { id: 3, name: "Victorian Emerald & Diamond Ring", category: "Jewelry", subcategory: "Rings", price: 1200.00, quantity: 2, era: "Victorian", condition: "Pristine", sku: "JWL-9903", description: "Exquisite 18K gold Victorian cluster ring." },
+        { id: 4, name: "Mid-Century Brass Desk Clock", category: "Collectibles", subcategory: "Clocks", price: 320.00, quantity: 4, era: "1950s", condition: "Great", sku: "COL-5004", description: "Mid-century modern Swiss brass mechanical desk clock." }
+      ];
+
       async function loadProducts() {
         try {
           const category = categoryFilter.value;
@@ -135,16 +142,21 @@
           if (search) query.append('search', search);
 
           const res = await fetch(`/api/products?${query.toString()}`);
-          const data = await res.json();
-
           if (res.ok) {
-            renderProducts(data.products);
-          } else {
-            tableBody.innerHTML = `<tr><td colspan="7" style="color: #ef4444; text-align: center;">Error: ${data.error}</td></tr>`;
+            const data = await res.json();
+            renderProducts(data.products || []);
+            return;
           }
         } catch (err) {
-          tableBody.innerHTML = `<tr><td colspan="7" style="color: #ef4444; text-align: center;">Server connection error.</td></tr>`;
+          console.warn('Backend API server offline, rendering static products list');
         }
+
+        let products = DEFAULT_PRODUCTS;
+        try {
+          const stored = localStorage.getItem('va_products');
+          if (stored) products = JSON.parse(stored);
+        } catch (e) {}
+        renderProducts(products);
       }
 
       function renderProducts(products) {

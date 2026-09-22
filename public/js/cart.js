@@ -335,7 +335,6 @@ function initMobileMenu() {
             <li><a href="/products.html"><i class="fa-solid fa-store"></i> Catalog & Vault</a></li>
             <li><a href="/about.html"><i class="fa-solid fa-book-open"></i> Our Story</a></li>
             <li><a href="/contact.html"><i class="fa-solid fa-envelope"></i> Contact</a></li>
-            <li><a href="/admin/login.html" style="color: var(--color-gold);"><i class="fa-solid fa-user-shield"></i> Admin Portal &rarr;</a></li>
           </ul>
 
           <div style="margin-top: 24px; border-top: 1px solid var(--border-color); padding-top: 16px;">

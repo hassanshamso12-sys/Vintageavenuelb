@@ -98,25 +98,30 @@
           </div>
         </div>
 
-        <!-- Firebase Storage Multi-File Upload Section -->
+        <!-- Product Images Upload & URL Section -->
         <div style="margin-bottom: 28px; background: var(--bg-secondary); border: 1px dashed var(--color-gold); padding: 24px; border-radius: var(--radius-md);">
           <label style="display: block; font-size: 0.9rem; text-transform: uppercase; color: var(--color-gold); font-weight: 700; margin-bottom: 8px;">
-            <i class="fa-solid fa-cloud-arrow-up"></i> Upload Product Images (Firebase Storage) *
+            <i class="fa-solid fa-cloud-arrow-up"></i> Upload Product Images & Photos *
           </label>
           <p style="font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: 16px;">
-            Select multiple images (front, back, details). Files will be uploaded to Firebase Cloud Storage and previewed via CDN links.
+            Select multiple image files or paste an image URL directly below.
           </p>
 
           <input type="file" id="prod-files-input" multiple accept="image/*" class="form-control" style="width: 100%; margin-bottom: 16px;">
 
-          <!-- Upload Progress Status -->
-          <div id="upload-status-box" style="display: none; margin-bottom: 16px; color: var(--color-gold); font-size: 0.85rem; font-weight: 600;">
-            <i class="fa-solid fa-spinner fa-spin"></i> Uploading to Firebase Storage... <span id="upload-progress-text">0%</span>
+          <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+            <input type="url" id="direct-url-input" class="form-control" placeholder="Or paste image URL (e.g. https://...)" style="flex: 1;">
+            <button type="button" id="add-direct-url-btn" class="btn btn-outline" style="padding: 8px 16px; font-size: 0.85rem;">Add URL</button>
           </div>
 
-          <!-- Preview Gallery of Firebase Storage Links -->
+          <!-- Upload Progress Status -->
+          <div id="upload-status-box" style="display: none; margin-bottom: 16px; color: var(--color-gold); font-size: 0.85rem; font-weight: 600;">
+            <i class="fa-solid fa-spinner fa-spin"></i> Processing images... <span id="upload-progress-text">0%</span>
+          </div>
+
+          <!-- Preview Gallery -->
           <div id="firebase-preview-gallery" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 16px; margin-top: 16px;">
-            <!-- Generated thumbnails from Firebase URLs -->
+            <!-- Generated thumbnails -->
           </div>
         </div>
 
@@ -185,13 +190,29 @@
         if (data.sku) skuInput.value = data.sku;
       });
 
-      // Firebase Multi-File Upload Handler
+      // Direct Image URL Handler
+      const directUrlBtn = document.getElementById('add-direct-url-btn');
+      const directUrlInput = document.getElementById('direct-url-input');
+
+      if (directUrlBtn && directUrlInput) {
+        directUrlBtn.addEventListener('click', () => {
+          const url = directUrlInput.value.trim();
+          if (url) {
+            firebaseUrls.push(url);
+            directUrlInput.value = '';
+            renderGallery();
+            showToast('Image URL added to product gallery!', 'success');
+          }
+        });
+      }
+
+      // Multi-File Upload Handler (Firebase with DataURL Fallback)
       filesInput.addEventListener('change', async (e) => {
         const files = e.target.files;
         if (!files || files.length === 0) return;
 
         statusBox.style.display = 'block';
-        showToast('Uploading images to Firebase Storage...', 'info');
+        showToast('Processing images...', 'info');
 
         try {
           const urls = await uploadMultipleToFirebase(files, (percent, current, total) => {
@@ -200,12 +221,12 @@
 
           firebaseUrls = firebaseUrls.concat(urls);
           statusBox.style.display = 'none';
-          showToast(`Successfully uploaded ${urls.length} images to Firebase Storage!`, 'success');
+          showToast(`Successfully added ${urls.length} images!`, 'success');
 
           renderGallery();
         } catch (err) {
           statusBox.style.display = 'none';
-          showToast('Failed to upload to Firebase Storage', 'danger');
+          showToast('Failed processing images', 'danger');
         }
       });
 
