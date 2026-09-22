@@ -82,29 +82,29 @@
   <section class="hero-section">
     <div class="container">
       <div class="hero-content">
-        <span class="hero-tag">&bull; Rare & Timeless Elegance &bull;</span>
-        <h1 class="hero-title">Curated Vintage Masterpieces</h1>
-        <p class="hero-desc">
+        <span class="hero-tag" data-cms="hero_tag">&bull; Rare & Timeless Elegance &bull;</span>
+        <h1 class="hero-title" data-cms="hero_title">Curated Vintage Masterpieces</h1>
+        <p class="hero-desc" data-cms="hero_desc">
           Discover hand-selected vintage apparel, rare mid-century timepieces, fine Victorian jewelry, and collectible artifacts crafted with unmatched historical heritage.
         </p>
-        <div style="display: flex; gap: 16px;">
+        <div style="display: flex; gap: 16px; flex-wrap: wrap;">
           <a href="/products.html" class="btn btn-gold">
-            <i class="fa-solid fa-compass"></i> Explore Collection
+            <i class="fa-solid fa-compass"></i> <span data-cms="hero_btn_primary">Explore Collection</span>
           </a>
-          <a href="/about.html" class="btn btn-outline">Our Curation Process</a>
+          <a href="/about.html" class="btn btn-outline" data-cms="hero_btn_secondary">Our Curation Process</a>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Featured Products Section -->
-  <main class="container" style="padding: 80px 24px;">
+  <main class="container" style="padding: 60px 24px 80px;">
     <div class="section-header">
       <div>
-        <h2 class="section-title">Featured Arrivals</h2>
-        <p class="section-subtitle">Authenticated vintage pieces recently added to our vault</p>
+        <h2 class="section-title" data-cms="featured_title">Featured Arrivals</h2>
+        <p class="section-subtitle" data-cms="featured_subtitle">Authenticated vintage pieces recently added to our vault</p>
       </div>
-      <a href="/products.html" class="btn btn-outline btn-sm">View All Artifacts &rarr;</a>
+      <a href="/products.html" class="btn btn-outline btn-sm" data-cms="featured_btn_text">View All Artifacts &rarr;</a>
     </div>
 
     <!-- Product Grid -->
@@ -115,7 +115,7 @@
 
   <footer class="footer">
     <div class="container">
-      <p>&copy; 2026 Vintage Avenue E-Commerce & Retail Management System.</p>
+      <p data-cms="footer_text">&copy; 2026 Vintage Avenue E-Commerce & Retail Management System.</p>
     </div>
   </footer>
 

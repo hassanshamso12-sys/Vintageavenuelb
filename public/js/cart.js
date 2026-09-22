@@ -212,24 +212,54 @@ function showToast(message, type = 'info') {
 }
 
 // Fetch live brand settings & theme customization
+// Live Site Branding & CMS Text Content Loader for Storefront
 async function applyLiveBrandSettings() {
   try {
     const res = await fetch('/api/settings');
     const data = await res.json();
     if (res.ok && data.settings) {
       const s = data.settings;
-      if (s.theme_palette && s.theme_palette !== 'gold') {
-        document.body.classList.add(`theme-${s.theme_palette}`);
+      if (s.theme_palette) {
+        document.body.classList.remove('theme-emerald', 'theme-sapphire', 'theme-rose');
+        if (s.theme_palette !== 'gold') {
+          document.body.classList.add(`theme-${s.theme_palette}`);
+        }
       }
-      if (s.brand_name) {
-        document.querySelectorAll('.brand-logo span').forEach(el => el.textContent = s.brand_name);
-      }
-      if (s.logo_icon) {
-        document.querySelectorAll('.brand-logo i').forEach(el => el.className = `fa-solid ${s.logo_icon}`);
+
+      // Brand Logo & Icon
+      const brandLogoLinks = document.querySelectorAll('.brand-logo');
+      brandLogoLinks.forEach(brandLogoLink => {
+        const brandText = s.brand_name || 'VINTAGE AVENUE';
+        if (s.site_logo_url) {
+          brandLogoLink.innerHTML = `<img src="${s.site_logo_url}" alt="${brandText}" class="brand-logo-img"> <span>${brandText}</span>`;
+        } else {
+          const iconClass = s.logo_icon || 'fa-gem';
+          brandLogoLink.innerHTML = `<i class="fa-solid ${iconClass}"></i> <span>${brandText}</span>`;
+        }
+      });
+
+      // Dynamic CMS Text Content for [data-cms] elements
+      document.querySelectorAll('[data-cms]').forEach(el => {
+        const key = el.getAttribute('data-cms');
+        if (s[key] !== undefined && s[key] !== null && s[key] !== '') {
+          el.textContent = s[key];
+        }
+      });
+
+      // Announcement Bar
+      if (s.announcement_text && s.announcement_text.trim() !== '') {
+        let bar = document.getElementById('announcement-bar');
+        if (!bar) {
+          bar = document.createElement('div');
+          bar.id = 'announcement-bar';
+          bar.className = 'announcement-bar';
+          document.body.insertBefore(bar, document.body.firstChild);
+        }
+        bar.textContent = s.announcement_text;
       }
     }
   } catch (e) {
-    console.error('Error fetching settings:', e);
+    console.error('Failed loading storefront settings:', e);
   }
 }
 
@@ -289,11 +319,38 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Load dynamic Categories & Subcategories into Navbar Catalog Dropdown
-  async function loadNavbarCategories() {
-    const dropdowns = document.querySelectorAll('.nav-dropdown');
-    if (!dropdowns || dropdowns.length === 0) return;
+  // Handle Catalog Dropdown Toggling on Click / Touch
+  const dropdownItems = document.querySelectorAll('.has-dropdown');
+  dropdownItems.forEach(item => {
+    const link = item.querySelector('a');
+    if (!link) return;
 
+    link.addEventListener('click', (e) => {
+      // If clicking directly on arrow icon OR if dropdown is not active yet, toggle dropdown
+      const isChevron = e.target.classList.contains('fa-chevron-down') || e.target.closest('.fa-chevron-down');
+      const isActive = item.classList.contains('active');
+
+      if (isChevron || !isActive) {
+        e.preventDefault();
+        e.stopPropagation();
+        // Toggle active on target item, close others
+        dropdownItems.forEach(other => {
+          if (other !== item) other.classList.remove('active');
+        });
+        item.classList.toggle('active');
+      }
+    });
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.has-dropdown')) {
+      dropdownItems.forEach(item => item.classList.remove('active'));
+    }
+  });
+
+  // Load dynamic Categories & Subcategories into Navbar Catalog Dropdown & Mobile Drawer
+  async function loadNavbarCategories() {
     try {
       const res = await fetch('/api/categories');
       const data = await res.json();
@@ -301,53 +358,61 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (categories.length === 0) return;
 
-      let html = `<a href="/products.html" style="font-weight: 700; border-bottom: 1px solid var(--border-color); margin-bottom: 6px; padding-bottom: 8px;"><i class="fa-solid fa-store" style="margin-right: 6px;"></i> All Items</a>`;
+      // Populate desktop nav dropdowns
+      const dropdowns = document.querySelectorAll('.nav-dropdown');
+      if (dropdowns.length > 0) {
+        let html = `<a href="/products.html" style="font-weight: 700; border-bottom: 1px solid var(--border-color); margin-bottom: 6px; padding-bottom: 8px;"><i class="fa-solid fa-store" style="margin-right: 6px;"></i> All Items</a>`;
 
-      categories.forEach(cat => {
-        html += `<a href="/products.html?category=${encodeURIComponent(cat.name)}" class="dropdown-cat-title">${cat.name}</a>`;
-        if (cat.subcategories && cat.subcategories.length > 0) {
-          cat.subcategories.forEach(sub => {
-            html += `<a href="/products.html?category=${encodeURIComponent(cat.name)}&subcategory=${encodeURIComponent(sub.name)}" class="dropdown-sub-item">&bull; ${sub.name}</a>`;
-          });
-        }
-      });
+        categories.forEach(cat => {
+          html += `<a href="/products.html?category=${encodeURIComponent(cat.name)}" class="dropdown-cat-title">${cat.name}</a>`;
+          if (cat.subcategories && cat.subcategories.length > 0) {
+            cat.subcategories.forEach(sub => {
+              html += `<a href="/products.html?category=${encodeURIComponent(cat.name)}&subcategory=${encodeURIComponent(sub.name)}" class="dropdown-sub-item">&bull; ${sub.name}</a>`;
+            });
+          }
+        });
 
-      dropdowns.forEach(dropdown => {
-        dropdown.innerHTML = html;
-      });
+        dropdowns.forEach(dropdown => {
+          dropdown.innerHTML = html;
+        });
+      }
+
+      // Populate mobile drawer categories accordion
+      const mobileCatList = document.getElementById('mobile-drawer-categories-list');
+      if (mobileCatList) {
+        let mobileHtml = `
+          <li>
+            <a href="/products.html" style="background: var(--bg-card);"><i class="fa-solid fa-layer-group" style="color: var(--color-gold);"></i> All Products</a>
+          </li>
+        `;
+
+        categories.forEach(cat => {
+          mobileHtml += `
+            <li style="margin-bottom: 4px;">
+              <a href="/products.html?category=${encodeURIComponent(cat.name)}" style="font-size: 0.88rem; justify-content: space-between; background: var(--bg-card);">
+                <span><i class="fa-solid fa-tag" style="font-size: 0.8rem; color: var(--color-gold);"></i> ${cat.name}</span>
+                <i class="fa-solid fa-chevron-right" style="font-size: 0.75rem;"></i>
+              </a>
+          `;
+          if (cat.subcategories && cat.subcategories.length > 0) {
+            mobileHtml += `<div style="padding-left: 20px; display: flex; flex-direction: column; gap: 4px; margin-top: 4px;">`;
+            cat.subcategories.forEach(sub => {
+              mobileHtml += `
+                <a href="/products.html?category=${encodeURIComponent(cat.name)}&subcategory=${encodeURIComponent(sub.name)}" style="font-size: 0.8rem; padding: 6px 12px; background: transparent; border: none; color: var(--color-text-secondary);">
+                  &bull; ${sub.name}
+                </a>
+              `;
+            });
+            mobileHtml += `</div>`;
+          }
+          mobileHtml += `</li>`;
+        });
+
+        mobileCatList.innerHTML = mobileHtml;
+      }
+
     } catch (err) {
       console.error('Error fetching navbar categories:', err);
-    }
-  }
-
-  // Live Site Branding & Custom Logo Loader for Storefront
-  async function loadSiteBranding() {
-    try {
-      const res = await fetch('/api/settings');
-      const data = await res.json();
-      if (res.ok && data.settings) {
-        const s = data.settings;
-        if (s.theme_palette) {
-          document.body.classList.remove('theme-emerald', 'theme-sapphire', 'theme-rose');
-          if (s.theme_palette !== 'gold') {
-            document.body.classList.add(`theme-${s.theme_palette}`);
-          }
-        }
-
-        const brandLogoLink = document.querySelector('.brand-logo');
-        if (brandLogoLink) {
-          const brandText = s.brand_name || 'VINTAGE AVENUE';
-
-          if (s.site_logo_url) {
-            brandLogoLink.innerHTML = `<img src="${s.site_logo_url}" alt="${brandText}" class="brand-logo-img"> <span>${brandText}</span>`;
-          } else {
-            const iconClass = s.logo_icon || 'fa-gem';
-            brandLogoLink.innerHTML = `<i class="fa-solid ${iconClass}"></i> <span>${brandText}</span>`;
-          }
-        }
-      }
-    } catch (err) {
-      console.error('Failed loading storefront branding settings:', err);
     }
   }
 
@@ -379,11 +444,20 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="mobile-nav-body">
             <ul class="mobile-nav-links">
               <li><a href="/index.html"><i class="fa-solid fa-house"></i> Home</a></li>
-              <li><a href="/products.html"><i class="fa-solid fa-store"></i> All Catalog Items</a></li>
+              <li><a href="/products.html"><i class="fa-solid fa-store"></i> Catalog & Vault</a></li>
               <li><a href="/about.html"><i class="fa-solid fa-book-open"></i> Our Story</a></li>
               <li><a href="/contact.html"><i class="fa-solid fa-envelope"></i> Contact</a></li>
               <li><a href="/admin/login.html" style="color: var(--color-gold);"><i class="fa-solid fa-user-shield"></i> Admin Portal &rarr;</a></li>
             </ul>
+
+            <div style="margin-top: 24px; border-top: 1px solid var(--border-color); padding-top: 16px;">
+              <div style="font-size: 0.8rem; font-weight: 700; color: var(--color-gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">
+                <i class="fa-solid fa-list"></i> Collections & Categories
+              </div>
+              <ul id="mobile-drawer-categories-list" style="list-style: none; display: flex; flex-direction: column; gap: 6px;">
+                <!-- Dynamically loaded -->
+              </ul>
+            </div>
           </div>
         </div>
       `;
@@ -412,5 +486,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initMobileMenu();
   loadNavbarCategories();
-  loadSiteBranding();
 });

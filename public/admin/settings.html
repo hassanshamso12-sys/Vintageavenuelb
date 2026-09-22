@@ -24,7 +24,7 @@
         <li><a href="/admin/orders.html">Orders</a></li>
         <li><a href="/admin/customers.html">Recurrent VIPs</a></li>
         <li><a href="/admin/sales.html">Sales Reports</a></li>
-        <li><a href="/admin/settings.html" class="active">Settings & Visuals</a></li>
+        <li><a href="/admin/settings.html" class="active">Settings</a></li>
         <li><a href="/index.html" target="_blank" style="color: var(--color-text-secondary);"><i class="fa-solid fa-external-link"></i> Live Store</a></li>
       </ul>
 
@@ -182,6 +182,135 @@
         </div>
       </div>
 
+      <!-- Live Storefront Text & CMS Copy Manager Card -->
+      <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 32px; grid-column: 1 / -1;">
+        <h3 style="font-size: 1.5rem; color: var(--color-gold); margin-bottom: 8px;">
+          <i class="fa-solid fa-pen-to-square"></i> Live Storefront Content & Copy CMS
+        </h3>
+        <p style="color: var(--color-text-secondary); margin-bottom: 24px; font-size: 0.9rem;">
+          Edit any text, headline, about story, contact info, or banner copy across your live website. Changes update instantly live for all visitors.
+        </p>
+
+        <form id="cms-content-form">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 24px;">
+
+            <!-- Announcement Bar & Top Header -->
+            <div style="background: var(--bg-secondary); padding: 20px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+              <h4 style="color: var(--color-gold); font-size: 1.1rem; margin-bottom: 14px;">
+                <i class="fa-solid fa-bullhorn"></i> Top Announcement Bar
+              </h4>
+              <div>
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 6px;">Announcement Bar Text</label>
+                <input type="text" id="cms-announcement-text" class="form-control" placeholder="e.g. ✨ FREE WORLDWIDE INSURED SHIPPING ON ORDERS OVER $500 ✨" style="width: 100%;">
+              </div>
+            </div>
+
+            <!-- Home Page Hero Banner -->
+            <div style="background: var(--bg-secondary); padding: 20px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+              <h4 style="color: var(--color-gold); font-size: 1.1rem; margin-bottom: 14px;">
+                <i class="fa-solid fa-star"></i> Homepage Hero Banner
+              </h4>
+              <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 6px;">Hero Subtitle / Tag</label>
+                <input type="text" id="cms-hero-tag" class="form-control" placeholder="e.g. • Rare & Timeless Elegance •" style="width: 100%;">
+              </div>
+              <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 6px;">Main Hero Headline</label>
+                <input type="text" id="cms-hero-title" class="form-control" placeholder="e.g. Curated Vintage Masterpieces" style="width: 100%;">
+              </div>
+              <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 6px;">Hero Description Paragraph</label>
+                <textarea id="cms-hero-desc" class="form-control" rows="3" style="width: 100%;"></textarea>
+              </div>
+              <div style="display: flex; gap: 12px;">
+                <div style="flex: 1;">
+                  <label style="display: block; font-size: 0.75rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 4px;">Primary Btn Text</label>
+                  <input type="text" id="cms-hero-btn-primary" class="form-control" placeholder="Explore Collection" style="width: 100%;">
+                </div>
+                <div style="flex: 1;">
+                  <label style="display: block; font-size: 0.75rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 4px;">Secondary Btn Text</label>
+                  <input type="text" id="cms-hero-btn-secondary" class="form-control" placeholder="Our Process" style="width: 100%;">
+                </div>
+              </div>
+            </div>
+
+            <!-- Featured Section -->
+            <div style="background: var(--bg-secondary); padding: 20px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+              <h4 style="color: var(--color-gold); font-size: 1.1rem; margin-bottom: 14px;">
+                <i class="fa-solid fa-gem"></i> Featured Collection Text
+              </h4>
+              <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 6px;">Featured Section Title</label>
+                <input type="text" id="cms-featured-title" class="form-control" placeholder="Featured Arrivals" style="width: 100%;">
+              </div>
+              <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 6px;">Featured Section Subtitle</label>
+                <input type="text" id="cms-featured-subtitle" class="form-control" placeholder="Authenticated vintage pieces recently added to our vault" style="width: 100%;">
+              </div>
+              <div>
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 6px;">View All Button Text</label>
+                <input type="text" id="cms-featured-btn-text" class="form-control" placeholder="View All Artifacts →" style="width: 100%;">
+              </div>
+            </div>
+
+            <!-- About Us Page Content -->
+            <div style="background: var(--bg-secondary); padding: 20px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+              <h4 style="color: var(--color-gold); font-size: 1.1rem; margin-bottom: 14px;">
+                <i class="fa-solid fa-book-open"></i> About Us / Our Story Page
+              </h4>
+              <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 6px;">About Page Tag</label>
+                <input type="text" id="cms-about-tag" class="form-control" placeholder="Heritage & Craftsmanship" style="width: 100%;">
+              </div>
+              <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 6px;">Main Title</label>
+                <input type="text" id="cms-about-title" class="form-control" placeholder="The Vintage Avenue Legacy" style="width: 100%;">
+              </div>
+              <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 6px;">Story Paragraph 1</label>
+                <textarea id="cms-about-desc1" class="form-control" rows="3" style="width: 100%;"></textarea>
+              </div>
+              <div>
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 6px;">Story Paragraph 2</label>
+                <textarea id="cms-about-desc2" class="form-control" rows="3" style="width: 100%;"></textarea>
+              </div>
+            </div>
+
+            <!-- Contact Page & Footer -->
+            <div style="background: var(--bg-secondary); padding: 20px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+              <h4 style="color: var(--color-gold); font-size: 1.1rem; margin-bottom: 14px;">
+                <i class="fa-solid fa-envelope"></i> Contact Page & Footer Details
+              </h4>
+              <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 6px;">Contact Page Headline</label>
+                <input type="text" id="cms-contact-title" class="form-control" placeholder="Contact Our Concierge" style="width: 100%;">
+              </div>
+              <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 6px;">Boutique Physical Address</label>
+                <input type="text" id="cms-contact-address" class="form-control" placeholder="100 Avenue de Vintage, Suite 400..." style="width: 100%;">
+              </div>
+              <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 6px;">Client Support Email</label>
+                <input type="email" id="cms-contact-email" class="form-control" placeholder="concierge@vintageavenuelb.com" style="width: 100%;">
+              </div>
+              <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 6px;">Support Phone Number</label>
+                <input type="text" id="cms-contact-phone" class="form-control" placeholder="+961 70 123 456" style="width: 100%;">
+              </div>
+              <div>
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 6px;">Footer Copyright Tagline</label>
+                <input type="text" id="cms-footer-text" class="form-control" placeholder="© 2026 Vintage Avenue. All Rights Reserved." style="width: 100%;">
+              </div>
+            </div>
+
+          </div>
+
+          <button type="submit" class="btn btn-gold" style="width: 100%; font-size: 1.05rem; padding: 14px;">
+            <i class="fa-solid fa-floppy-disk"></i> Save All Live Storefront Content Changes
+          </button>
+        </form>
+      </div>
+
     </div>
   </main>
 
@@ -202,6 +331,8 @@
       const whishFileInput = document.getElementById('whish-file-input');
       const whishPreviewWrap = document.getElementById('whish-preview-wrap');
       const whishPreviewImg = document.getElementById('whish-preview-img');
+
+      const cmsForm = document.getElementById('cms-content-form');
 
       // Load Settings
       async function loadSettings() {
@@ -225,10 +356,83 @@
               whishPreviewImg.src = s.whish_barcode_url;
               whishPreviewWrap.style.display = 'block';
             }
+
+            // Populate CMS inputs
+            if (s.announcement_text) document.getElementById('cms-announcement-text').value = s.announcement_text;
+            if (s.hero_tag) document.getElementById('cms-hero-tag').value = s.hero_tag;
+            if (s.hero_title) document.getElementById('cms-hero-title').value = s.hero_title;
+            if (s.hero_desc) document.getElementById('cms-hero-desc').value = s.hero_desc;
+            if (s.hero_btn_primary) document.getElementById('cms-hero-btn-primary').value = s.hero_btn_primary;
+            if (s.hero_btn_secondary) document.getElementById('cms-hero-btn-secondary').value = s.hero_btn_secondary;
+
+            if (s.featured_title) document.getElementById('cms-featured-title').value = s.featured_title;
+            if (s.featured_subtitle) document.getElementById('cms-featured-subtitle').value = s.featured_subtitle;
+            if (s.featured_btn_text) document.getElementById('cms-featured-btn-text').value = s.featured_btn_text;
+
+            if (s.about_tag) document.getElementById('cms-about-tag').value = s.about_tag;
+            if (s.about_title) document.getElementById('cms-about-title').value = s.about_title;
+            if (s.about_desc1) document.getElementById('cms-about-desc1').value = s.about_desc1;
+            if (s.about_desc2) document.getElementById('cms-about-desc2').value = s.about_desc2;
+
+            if (s.contact_title) document.getElementById('cms-contact-title').value = s.contact_title;
+            if (s.contact_address) document.getElementById('cms-contact-address').value = s.contact_address;
+            if (s.contact_email) document.getElementById('cms-contact-email').value = s.contact_email;
+            if (s.contact_phone) document.getElementById('cms-contact-phone').value = s.contact_phone;
+            if (s.footer_text) document.getElementById('cms-footer-text').value = s.footer_text;
           }
         } catch (e) {
           console.error(e);
         }
+      }
+
+      // Save CMS Storefront Content
+      if (cmsForm) {
+        cmsForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const payload = {
+            settings: {
+              announcement_text: document.getElementById('cms-announcement-text').value.trim(),
+              hero_tag: document.getElementById('cms-hero-tag').value.trim(),
+              hero_title: document.getElementById('cms-hero-title').value.trim(),
+              hero_desc: document.getElementById('cms-hero-desc').value.trim(),
+              hero_btn_primary: document.getElementById('cms-hero-btn-primary').value.trim(),
+              hero_btn_secondary: document.getElementById('cms-hero-btn-secondary').value.trim(),
+
+              featured_title: document.getElementById('cms-featured-title').value.trim(),
+              featured_subtitle: document.getElementById('cms-featured-subtitle').value.trim(),
+              featured_btn_text: document.getElementById('cms-featured-btn-text').value.trim(),
+
+              about_tag: document.getElementById('cms-about-tag').value.trim(),
+              about_title: document.getElementById('cms-about-title').value.trim(),
+              about_desc1: document.getElementById('cms-about-desc1').value.trim(),
+              about_desc2: document.getElementById('cms-about-desc2').value.trim(),
+
+              contact_title: document.getElementById('cms-contact-title').value.trim(),
+              contact_address: document.getElementById('cms-contact-address').value.trim(),
+              contact_email: document.getElementById('cms-contact-email').value.trim(),
+              contact_phone: document.getElementById('cms-contact-phone').value.trim(),
+              footer_text: document.getElementById('cms-footer-text').value.trim()
+            }
+          };
+
+          try {
+            const res = await fetch('/api/settings', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${AdminAuth.getToken()}`
+              },
+              body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+              showToast('Live Storefront Text Content updated successfully!', 'success');
+            } else {
+              showToast('Failed to save content settings.', 'danger');
+            }
+          } catch (err) {
+            showToast('Error saving storefront text content.', 'danger');
+          }
+        });
       }
 
       // Save Visual Settings

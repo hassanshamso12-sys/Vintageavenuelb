@@ -18,7 +18,12 @@
 
       <ul class="nav-links">
         <li><a href="/index.html">Home</a></li>
-        <li><a href="/products.html">Catalog</a></li>
+        <li class="has-dropdown">
+          <a href="/products.html">Catalog <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem; margin-left: 4px;"></i></a>
+          <div class="nav-dropdown">
+            <a href="/products.html">All Items</a>
+          </div>
+        </li>
         <li><a href="/about.html">Our Story</a></li>
         <li><a href="/contact.html" class="active">Contact</a></li>
         <li><a href="/admin/login.html" style="color: var(--color-text-muted);">Admin Portal</a></li>
@@ -33,9 +38,9 @@
     </div>
   </header>
 
-  <main class="container" style="padding: 80px 24px 100px;">
+  <main class="container" style="padding: 60px 24px 80px;">
     <div style="max-width: 700px; margin: 0 auto;">
-      <h1 style="font-size: 3rem; font-weight: 700; color: var(--color-gold); margin-bottom: 12px; text-align: center;">Contact Our Concierge</h1>
+      <h1 style="font-size: 3rem; font-weight: 700; color: var(--color-gold); margin-bottom: 12px; text-align: center;" data-cms="contact_title">Contact Our Concierge</h1>
       <p style="text-align: center; color: var(--color-text-secondary); margin-bottom: 48px; font-size: 1.1rem;">
         Have a question regarding a vintage item, private consignment, or order status?
       </p>
@@ -43,17 +48,17 @@
       <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 40px;">
         <div style="margin-bottom: 24px;">
           <h4 style="font-size: 1.2rem; color: var(--color-gold); margin-bottom: 8px;">Flagship Boutique</h4>
-          <p style="color: var(--color-text-secondary);">100 Avenue de Vintage, Suite 400<br>Beirut / Long Beach Boutique Vault</p>
+          <p style="color: var(--color-text-secondary);" data-cms="contact_address">100 Avenue de Vintage, Suite 400<br>Beirut / Long Beach Boutique Vault</p>
         </div>
 
         <div style="margin-bottom: 24px;">
           <h4 style="font-size: 1.2rem; color: var(--color-gold); margin-bottom: 8px;">Client Care Email</h4>
-          <p style="color: var(--color-text-secondary);">concierge@vintageavenue.com</p>
+          <p style="color: var(--color-text-secondary);" data-cms="contact_email">concierge@vintageavenue.com</p>
         </div>
 
         <div>
           <h4 style="font-size: 1.2rem; color: var(--color-gold); margin-bottom: 8px;">Phone Assistance</h4>
-          <p style="color: var(--color-text-secondary);">+1 (800) 555-VINTAGE (Mon-Sat: 10AM - 7PM)</p>
+          <p style="color: var(--color-text-secondary);" data-cms="contact_phone">+1 (800) 555-VINTAGE (Mon-Sat: 10AM - 7PM)</p>
         </div>
       </div>
     </div>
@@ -61,7 +66,7 @@
 
   <footer class="footer">
     <div class="container">
-      <p>&copy; 2026 Vintage Avenue E-Commerce & Retail Management System.</p>
+      <p data-cms="footer_text">&copy; 2026 Vintage Avenue E-Commerce & Retail Management System.</p>
     </div>
   </footer>
 

@@ -18,7 +18,12 @@
 
       <ul class="nav-links">
         <li><a href="/index.html">Home</a></li>
-        <li><a href="/products.html">Catalog</a></li>
+        <li class="has-dropdown">
+          <a href="/products.html">Catalog <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem; margin-left: 4px;"></i></a>
+          <div class="nav-dropdown">
+            <a href="/products.html">All Items</a>
+          </div>
+        </li>
         <li><a href="/about.html" class="active">Our Story</a></li>
         <li><a href="/contact.html">Contact</a></li>
         <li><a href="/admin/login.html" style="color: var(--color-text-muted);">Admin Portal</a></li>
@@ -33,18 +38,18 @@
     </div>
   </header>
 
-  <main class="container" style="padding: 80px 24px;">
+  <main class="container" style="padding: 60px 24px 80px;">
     <div style="max-width: 800px; margin: 0 auto; text-align: center;">
-      <span style="color: var(--color-gold); font-family: var(--font-heading); font-size: 1.2rem; text-transform: uppercase; letter-spacing: 2px;">
+      <span style="color: var(--color-gold); font-family: var(--font-heading); font-size: 1.2rem; text-transform: uppercase; letter-spacing: 2px;" data-cms="about_tag">
         Heritage & Craftsmanship
       </span>
-      <h1 style="font-size: 3.5rem; font-weight: 700; margin: 12px 0 32px;">The Vintage Avenue Legacy</h1>
+      <h1 style="font-size: 3.5rem; font-weight: 700; margin: 12px 0 32px;" data-cms="about_title">The Vintage Avenue Legacy</h1>
       
-      <p style="font-size: 1.15rem; color: var(--color-text-secondary); line-height: 1.9; margin-bottom: 28px;">
+      <p style="font-size: 1.15rem; color: var(--color-text-secondary); line-height: 1.9; margin-bottom: 28px;" data-cms="about_desc1">
         Founded in 2026, <strong>Vintage Avenue</strong> is a premier destination for collectors and enthusiasts of rare vintage garments, fine period jewelry, and precision horology. We believe that true style transcends time—each piece in our collection carries a rich narrative and timeless craftsmanship.
       </p>
 
-      <p style="font-size: 1.15rem; color: var(--color-text-secondary); line-height: 1.9; margin-bottom: 40px;">
+      <p style="font-size: 1.15rem; color: var(--color-text-secondary); line-height: 1.9; margin-bottom: 40px;" data-cms="about_desc2">
         Our team of vintage historians and master curators authenticates every artifact to ensure historical fidelity, structural integrity, and exceptional provenance.
       </p>
 
@@ -54,7 +59,7 @@
 
   <footer class="footer">
     <div class="container">
-      <p>&copy; 2026 Vintage Avenue E-Commerce & Retail Management System.</p>
+      <p data-cms="footer_text">&copy; 2026 Vintage Avenue E-Commerce & Retail Management System.</p>
     </div>
   </footer>
 
