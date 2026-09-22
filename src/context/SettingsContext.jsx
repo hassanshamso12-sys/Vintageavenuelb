@@ -8,7 +8,7 @@ const DEFAULT_SETTINGS = {
   theme_palette: 'gold',
   site_logo_url: '',
   whish_barcode_url: '',
-  announcement_text: '✨ FREE WORLDWIDE INSURED SHIPPING ON ORDERS OVER $500 ✨',
+  announcement_text: '✨ CURATED VINTAGE & LUXURY RETAIL • INSURED EXPRESS COURIER DISPATCH ✨',
   hero_tag: '• Rare & Timeless Elegance •',
   hero_title: 'Curated Vintage Masterpieces',
   hero_desc: 'Discover our handpicked vault of authenticated vintage apparel, rare mechanical timepieces, and historical luxury accessories.',
@@ -32,7 +32,11 @@ export const SettingsProvider = ({ children }) => {
   const [settings, setSettings] = useState(() => {
     try {
       const saved = localStorage.getItem('va_settings');
-      return saved ? { ...DEFAULT_SETTINGS, ...JSON.parse(saved) } : DEFAULT_SETTINGS;
+      let parsed = saved ? { ...DEFAULT_SETTINGS, ...JSON.parse(saved) } : DEFAULT_SETTINGS;
+      if (parsed.announcement_text && parsed.announcement_text.includes('WORLDWIDE')) {
+        parsed.announcement_text = '✨ CURATED VINTAGE & LUXURY RETAIL • INSURED EXPRESS COURIER DISPATCH ✨';
+      }
+      return parsed;
     } catch (e) {
       return DEFAULT_SETTINGS;
     }

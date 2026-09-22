@@ -135,26 +135,35 @@ export const Navbar = () => {
                 Home
               </NavLink>
             </li>
-            <li>
-              <NavLink to="/products" onClick={() => setMobileOpen(false)}>
-                Catalog / Shop All
-              </NavLink>
+
+            {/* Collapsible Mobile Catalog Dropdown */}
+            <li className="mobile-dropdown-group">
+              <div
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="mobile-dropdown-header"
+              >
+                <span>Catalog Collection</span>
+                <i className={`fa-solid ${dropdownOpen ? 'fa-chevron-up' : 'fa-chevron-down'}`}></i>
+              </div>
+
+              {dropdownOpen && (
+                <div className="mobile-dropdown-items">
+                  <NavLink to="/products" end onClick={() => setMobileOpen(false)} className="mobile-sub-link">
+                    • All Catalog Artifacts
+                  </NavLink>
+                  <NavLink to="/products?category=Apparel%20%26%20Clothing" onClick={() => setMobileOpen(false)} className="mobile-sub-link">
+                    • Apparel & Clothing
+                  </NavLink>
+                  <NavLink to="/products?category=Rare%20Watches" onClick={() => setMobileOpen(false)} className="mobile-sub-link">
+                    • Rare Watches
+                  </NavLink>
+                  <NavLink to="/products?category=Luxury%20Accessories" onClick={() => setMobileOpen(false)} className="mobile-sub-link">
+                    • Luxury Accessories
+                  </NavLink>
+                </div>
+              )}
             </li>
-            <li>
-              <NavLink to="/products?category=Apparel%20%26%20Clothing" onClick={() => setMobileOpen(false)}>
-                Apparel & Clothing
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/products?category=Rare%20Watches" onClick={() => setMobileOpen(false)}>
-                Rare Watches
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/products?category=Luxury%20Accessories" onClick={() => setMobileOpen(false)}>
-                Luxury Accessories
-              </NavLink>
-            </li>
+
             <li>
               <NavLink to="/about" onClick={() => setMobileOpen(false)}>
                 Our Story
