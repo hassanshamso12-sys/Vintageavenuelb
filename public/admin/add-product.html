@@ -152,21 +152,36 @@
       const progressText = document.getElementById('upload-progress-text');
       const gallery = document.getElementById('firebase-preview-gallery');
 
-      let firebaseUrls = [];
-      let categoryTree = [];
+      const DEFAULT_CATEGORIES = [
+        { id: 'cat-1', name: 'Apparel & Clothing', slug: 'apparel', subcategories: [ { id: 'sub-1', name: 'Vintage Jackets' }, { id: 'sub-2', name: 'Luxury Hoodies' }, { id: 'sub-3', name: 'Retro Shirts' } ] },
+        { id: 'cat-2', name: 'Rare Watches', slug: 'watches', subcategories: [ { id: 'sub-4', name: 'Automatic Chronographs' }, { id: 'sub-5', name: 'Gold Vintage Watches' } ] },
+        { id: 'cat-3', name: 'Luxury Accessories', slug: 'accessories', subcategories: [ { id: 'sub-6', name: 'Leather Bags' }, { id: 'sub-7', name: 'Jewelry & Rings' } ] }
+      ];
+
+      function getStoredCategories() {
+        try {
+          const stored = localStorage.getItem('va_categories');
+          if (stored) return JSON.parse(stored);
+        } catch (e) {}
+        return DEFAULT_CATEGORIES;
+      }
 
       // Fetch dynamic Categories & Subcategories
       async function loadCategories() {
         try {
           const res = await fetch('/api/categories');
-          const data = await res.json();
-          categoryTree = data.categories || [];
-
-          categorySelect.innerHTML = '<option value="">-- Select Category --</option>' + 
-            categoryTree.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+          if (res.ok) {
+            const data = await res.json();
+            categoryTree = (data && data.categories && data.categories.length > 0) ? data.categories : getStoredCategories();
+          } else {
+            categoryTree = getStoredCategories();
+          }
         } catch (err) {
-          console.error('Failed to load categories', err);
+          categoryTree = getStoredCategories();
         }
+
+        categorySelect.innerHTML = '<option value="">-- Select Category --</option>' + 
+          categoryTree.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
       }
 
       categorySelect.addEventListener('change', () => {

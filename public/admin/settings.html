@@ -353,6 +353,16 @@
       let pendingLogoDataUrl = '';
       let pendingWhishDataUrl = '';
 
+      function readFileAsDataURL(file) {
+        return new Promise((resolve) => {
+          if (!file) return resolve('');
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result || '');
+          reader.onerror = () => resolve('');
+          reader.readAsDataURL(file);
+        });
+      }
+
       // Live FileReader preview for Logo
       if (logoFileInput) {
         logoFileInput.addEventListener('change', (e) => {
@@ -564,8 +574,13 @@
 
         const file = logoFileInput ? logoFileInput.files[0] : null;
         if (file) {
+          showToast('Processing logo image...', 'info');
+          const fileDataUrl = await readFileAsDataURL(file);
+          if (fileDataUrl) {
+            logoUrlToSave = fileDataUrl;
+          }
+
           try {
-            showToast('Saving logo image...', 'info');
             const formData = new FormData();
             formData.append('image', file);
             const uploadRes = await fetch('/api/upload', {
