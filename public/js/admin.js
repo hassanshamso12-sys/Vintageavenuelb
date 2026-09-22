@@ -129,5 +129,68 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Mobile Navigation Drawer & Hamburger Menu Initializer for Admin
+  function initMobileMenu() {
+    const navActions = document.querySelector('.nav-actions');
+    if (!navActions) return;
+
+    if (!document.getElementById('mobile-menu-btn')) {
+      const btn = document.createElement('button');
+      btn.id = 'mobile-menu-btn';
+      btn.className = 'mobile-menu-btn';
+      btn.setAttribute('aria-label', 'Toggle Navigation');
+      btn.innerHTML = '<i class="fa-solid fa-bars"></i>';
+      navActions.appendChild(btn);
+    }
+
+    if (!document.getElementById('mobile-nav-drawer')) {
+      const drawerMarkup = `
+        <div id="mobile-nav-overlay" class="mobile-nav-overlay"></div>
+        <div id="mobile-nav-drawer" class="mobile-nav-drawer">
+          <div class="mobile-nav-header">
+            <a href="/admin/dashboard.html" class="brand-logo">
+              <i class="fa-solid fa-gem"></i>
+              <span>VINTAGE AVENUE <small style="font-size: 0.8rem; color: var(--color-text-muted);">[ADMIN]</small></span>
+            </a>
+            <button id="mobile-nav-close" class="mobile-nav-close">&times;</button>
+          </div>
+          <div class="mobile-nav-body">
+            <ul class="mobile-nav-links">
+              <li><a href="/admin/dashboard.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a></li>
+              <li><a href="/admin/products.html"><i class="fa-solid fa-box"></i> Products</a></li>
+              <li><a href="/admin/categories.html"><i class="fa-solid fa-folder"></i> Categories</a></li>
+              <li><a href="/admin/orders.html"><i class="fa-solid fa-cart-shopping"></i> Orders</a></li>
+              <li><a href="/admin/customers.html"><i class="fa-solid fa-users"></i> Recurrent VIPs</a></li>
+              <li><a href="/admin/sales.html"><i class="fa-solid fa-file-invoice-dollar"></i> Sales Reports</a></li>
+              <li><a href="/admin/settings.html"><i class="fa-solid fa-sliders"></i> Settings & Visuals</a></li>
+              <li><a href="/index.html" target="_blank" style="color: var(--color-gold);"><i class="fa-solid fa-external-link"></i> Live Store</a></li>
+            </ul>
+          </div>
+        </div>
+      `;
+      document.body.insertAdjacentHTML('beforeend', drawerMarkup);
+    }
+
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const closeBtn = document.getElementById('mobile-nav-close');
+    const overlay = document.getElementById('mobile-nav-overlay');
+    const drawer = document.getElementById('mobile-nav-drawer');
+
+    function openMobileNav() {
+      if (overlay) overlay.classList.add('active');
+      if (drawer) drawer.classList.add('active');
+    }
+
+    function closeMobileNav() {
+      if (overlay) overlay.classList.remove('active');
+      if (drawer) drawer.classList.remove('active');
+    }
+
+    if (menuBtn) menuBtn.addEventListener('click', openMobileNav);
+    if (closeBtn) closeBtn.addEventListener('click', closeMobileNav);
+    if (overlay) overlay.addEventListener('click', closeMobileNav);
+  }
+
+  initMobileMenu();
   loadSiteBranding();
 });
