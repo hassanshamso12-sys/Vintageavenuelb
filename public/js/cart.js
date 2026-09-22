@@ -351,31 +351,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Load dynamic Categories & Subcategories into Navbar Catalog Dropdown & Mobile Drawer
   async function loadNavbarCategories() {
+    const DEFAULT_CATS = [
+      { name: "Apparel", subcategories: [{ name: "Jackets" }, { name: "Dresses" }, { name: "Outerwear" }] },
+      { name: "Timepieces", subcategories: [{ name: "Mechanical" }, { name: "Quartz" }, { name: "Pocket Watches" }] },
+      { name: "Jewelry", subcategories: [{ name: "Rings" }, { name: "Necklaces" }, { name: "Bracelets" }] },
+      { name: "Accessories", subcategories: [{ name: "Scarves" }, { name: "Handbags" }, { name: "Sunglasses" }] },
+      { name: "Collectibles", subcategories: [{ name: "Clocks" }, { name: "Artifacts" }, { name: "Sculptures" }] }
+    ];
+
+    let categories = [];
     try {
       const res = await fetch('/api/categories');
-      const data = await res.json();
-      const categories = data.categories || [];
-
-      if (categories.length === 0) return;
-
-      // Populate desktop nav dropdowns
-      const dropdowns = document.querySelectorAll('.nav-dropdown');
-      if (dropdowns.length > 0) {
-        let html = `<a href="/products.html" style="font-weight: 700; border-bottom: 1px solid var(--border-color); margin-bottom: 6px; padding-bottom: 8px;"><i class="fa-solid fa-store" style="margin-right: 6px;"></i> All Items</a>`;
-
-        categories.forEach(cat => {
-          html += `<a href="/products.html?category=${encodeURIComponent(cat.name)}" class="dropdown-cat-title">${cat.name}</a>`;
-          if (cat.subcategories && cat.subcategories.length > 0) {
-            cat.subcategories.forEach(sub => {
-              html += `<a href="/products.html?category=${encodeURIComponent(cat.name)}&subcategory=${encodeURIComponent(sub.name)}" class="dropdown-sub-item">&bull; ${sub.name}</a>`;
-            });
-          }
-        });
-
-        dropdowns.forEach(dropdown => {
-          dropdown.innerHTML = html;
-        });
+      if (res.ok) {
+        const data = await res.json();
+        categories = data.categories || DEFAULT_CATS;
+      } else {
+        categories = DEFAULT_CATS;
       }
+    } catch (err) {
+      categories = DEFAULT_CATS;
+    }
+
+    if (categories.length === 0) return;
+
+    // Populate desktop nav dropdowns
+    const dropdowns = document.querySelectorAll('.nav-dropdown');
+    if (dropdowns.length > 0) {
+      let html = `<a href="/products.html" style="font-weight: 700; border-bottom: 1px solid var(--border-color); margin-bottom: 6px; padding-bottom: 8px;"><i class="fa-solid fa-store" style="margin-right: 6px;"></i> All Items</a>`;
+
+      categories.forEach(cat => {
+        html += `<a href="/products.html?category=${encodeURIComponent(cat.name)}" class="dropdown-cat-title">${cat.name}</a>`;
+        if (cat.subcategories && cat.subcategories.length > 0) {
+          cat.subcategories.forEach(sub => {
+            html += `<a href="/products.html?category=${encodeURIComponent(cat.name)}&subcategory=${encodeURIComponent(sub.name)}" class="dropdown-sub-item">&bull; ${sub.name}</a>`;
+          });
+        }
+      });
+
+      dropdowns.forEach(dropdown => {
+        dropdown.innerHTML = html;
+      });
+    }
 
       // Populate mobile drawer categories accordion
       const mobileCatList = document.getElementById('mobile-drawer-categories-list');

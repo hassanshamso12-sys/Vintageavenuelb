@@ -18,26 +18,46 @@ document.addEventListener('DOMContentLoaded', async () => {
   let initialCategory = urlParams.get('category') || 'All';
   let initialSubcategory = urlParams.get('subcategory') || 'All';
 
+  // Seed fallback products for static hosting
+  const DEFAULT_PRODUCTS = [
+    { id: 1, name: "1976 Vintage Moto Leather Jacket", category: "Apparel", subcategory: "Jackets", price: 250.00, quantity: 3, era: "1970s", condition: "Mint", sku: "APP-7601", description: "Iconic hand-distressed Italian leather motorcycle jacket with original brass hardware.", image_url: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&auto=format&fit=crop&q=80" },
+    { id: 2, name: "1968 Omega Seamaster Automatic", category: "Timepieces", subcategory: "Mechanical", price: 1850.00, quantity: 1, era: "1960s", condition: "Excellent", sku: "TIM-6802", description: "Authentic Swiss-made Omega Seamaster in solid stainless steel with original patina dial.", image_url: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&auto=format&fit=crop&q=80" },
+    { id: 3, name: "Victorian Emerald & Diamond Ring", category: "Jewelry", subcategory: "Rings", price: 1200.00, quantity: 2, era: "Victorian", condition: "Pristine", sku: "JWL-9903", description: "Exquisite 18K gold Victorian cluster ring featuring a natural Colombian emerald.", image_url: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&auto=format&fit=crop&q=80" },
+    { id: 4, name: "Mid-Century Brass Desk Clock", category: "Collectibles", subcategory: "Clocks", price: 320.00, quantity: 4, era: "1950s", condition: "Great", sku: "COL-5004", description: "Mid-century modern Swiss brass mechanical desk clock with exposed gear movement.", image_url: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=600&auto=format&fit=crop&q=80" }
+  ];
+
+  const DEFAULT_CATEGORIES = [
+    { name: "Apparel", subcategories: [{ name: "Jackets" }, { name: "Dresses" }, { name: "Outerwear" }] },
+    { name: "Timepieces", subcategories: [{ name: "Mechanical" }, { name: "Quartz" }, { name: "Pocket Watches" }] },
+    { name: "Jewelry", subcategories: [{ name: "Rings" }, { name: "Necklaces" }, { name: "Bracelets" }] },
+    { name: "Accessories", subcategories: [{ name: "Scarves" }, { name: "Handbags" }, { name: "Sunglasses" }] },
+    { name: "Collectibles", subcategories: [{ name: "Clocks" }, { name: "Artifacts" }, { name: "Sculptures" }] }
+  ];
+
   // Load Categories and Subcategories Tree for storefront filter
   async function loadCategoryFilters() {
     try {
       const res = await fetch('/api/categories');
-      const data = await res.json();
-      categoryTree = data.categories || [];
-
-      if (categoryFilter) {
-        categoryFilter.innerHTML = '<option value="All">All Categories</option>' +
-          categoryTree.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
-
-        if (initialCategory && initialCategory !== 'All') {
-          categoryFilter.value = initialCategory;
-        }
+      if (res.ok) {
+        const data = await res.json();
+        categoryTree = data.categories || [];
+      } else {
+        categoryTree = DEFAULT_CATEGORIES;
       }
-
-      updateSubcategoryDropdown(categoryFilter ? categoryFilter.value : 'All', initialSubcategory);
     } catch (err) {
-      console.error('Failed to load category filters:', err);
+      categoryTree = DEFAULT_CATEGORIES;
     }
+
+    if (categoryFilter) {
+      categoryFilter.innerHTML = '<option value="All">All Categories</option>' +
+        categoryTree.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+
+      if (initialCategory && initialCategory !== 'All') {
+        categoryFilter.value = initialCategory;
+      }
+    }
+
+    updateSubcategoryDropdown(categoryFilter ? categoryFilter.value : 'All', initialSubcategory);
   }
 
   function updateSubcategoryDropdown(selectedCategory, selectSub = 'All') {
@@ -91,18 +111,38 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (sort) queryParams.append('sort', sort);
 
       const res = await fetch(`/api/products?${queryParams.toString()}`);
-      const data = await res.json();
-
       if (res.ok) {
+        const data = await res.json();
         allProducts = data.products;
-        renderProducts(allProducts);
       } else {
-        productGrid.innerHTML = `<div class="error-msg">Error loading products: ${data.error}</div>`;
+        allProducts = filterFallbackProducts(DEFAULT_PRODUCTS, category, subcategory, search, sort);
       }
     } catch (err) {
-      console.error('Error fetching products:', err);
-      productGrid.innerHTML = `<div class="error-msg">Failed to connect to API server.</div>`;
+      const category = categoryFilter ? categoryFilter.value : 'All';
+      const subcategory = subcategoryFilter ? subcategoryFilter.value : 'All';
+      const search = searchInput ? searchInput.value.trim() : '';
+      const sort = sortFilter ? sortFilter.value : '';
+      allProducts = filterFallbackProducts(DEFAULT_PRODUCTS, category, subcategory, search, sort);
     }
+    renderProducts(allProducts);
+  }
+
+  function filterFallbackProducts(list, cat, sub, search, sort) {
+    let filtered = [...list];
+    if (cat && cat !== 'All') {
+      filtered = filtered.filter(p => p.category.toLowerCase() === cat.toLowerCase());
+    }
+    if (sub && sub !== 'All') {
+      filtered = filtered.filter(p => p.subcategory && p.subcategory.toLowerCase() === sub.toLowerCase());
+    }
+    if (search) {
+      const q = search.toLowerCase();
+      filtered = filtered.filter(p => p.name.toLowerCase().includes(q) || (p.era && p.era.toLowerCase().includes(q)) || (p.sku && p.sku.toLowerCase().includes(q)));
+    }
+    if (sort === 'price_asc') filtered.sort((a, b) => a.price - b.price);
+    if (sort === 'price_desc') filtered.sort((a, b) => b.price - a.price);
+    if (sort === 'name_asc') filtered.sort((a, b) => a.name.localeCompare(b.name));
+    return filtered;
   }
 
   // Render product cards
