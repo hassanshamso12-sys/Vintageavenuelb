@@ -7,3 +7,4 @@ node_modules/
 legacy_html_backup/
 .firebase/
 
+dist/
