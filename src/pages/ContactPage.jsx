@@ -12,7 +12,7 @@ export const ContactPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    showToast('Your message has been received! Our concierge will contact you shortly.', 'success');
+    showToast('Your message has been received! Our support team will contact you shortly.', 'success');
     setName('');
     setEmail('');
     setMessage('');
@@ -33,7 +33,7 @@ export const ContactPage = () => {
         {/* Contact Info */}
         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '32px' }}>
           <h3 style={{ fontSize: '1.4rem', color: 'var(--color-gold)', marginBottom: '24px' }}>
-            <i className="fa-solid fa-gem"></i> Boutique Concierge
+            <i className="fa-solid fa-envelope"></i> Contact Information
           </h3>
 
           <div style={{ marginBottom: '20px' }}>
@@ -47,7 +47,7 @@ export const ContactPage = () => {
           </div>
 
           <div style={{ marginBottom: '20px' }}>
-            <div style={{ fontSize: '0.8rem', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Concierge Hotline / WhatsApp</div>
+            <div style={{ fontSize: '0.8rem', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Support Hotline / WhatsApp</div>
             <div style={{ fontWeight: 600 }}>{settings.contact_phone || '+961 70 123 456'}</div>
           </div>
         </div>

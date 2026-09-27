@@ -54,7 +54,7 @@ export const HomePage = () => {
           </div>
           <div>
             <i className="fa-solid fa-crown" style={{ fontSize: '2.2rem', color: 'var(--color-gold)', marginBottom: '16px' }}></i>
-            <h4 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>24/7 VIP Concierge</h4>
+            <h4 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>24/7 VIP Support</h4>
             <p style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)' }}>Dedicated personal client advisors available for bespoke inquiries and sourcing requests.</p>
           </div>
         </div>

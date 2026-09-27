@@ -243,7 +243,7 @@ export const ProductDetailPage = () => {
             </div>
             <div>
               <i className="fa-solid fa-crown" style={{ color: 'var(--color-gold)', fontSize: '1.5rem', marginBottom: '8px' }}></i>
-              <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--color-text-secondary)', fontWeight: 600 }}>24/7 VIP Concierge Support</div>
+              <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--color-text-secondary)', fontWeight: 600 }}>24/7 VIP Support</div>
             </div>
           </div>
         </div>
