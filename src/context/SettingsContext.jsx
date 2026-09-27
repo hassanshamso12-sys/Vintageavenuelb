@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { db } from '../firebase';
+import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 
 const SettingsContext = createContext();
 
@@ -63,41 +65,59 @@ export const SettingsProvider = ({ children }) => {
     }
   }, [settings.theme_palette]);
 
-  // Fetch backend settings if available
+  // Real-time Firebase Firestore Settings Sync across all browsers
   useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        const res = await fetch('/api/settings');
-        if (res.ok) {
-          const data = await res.json();
-          if (data && data.settings) {
-            setSettings(prev => {
-              const updated = { ...prev, ...data.settings };
-              localStorage.setItem('va_settings', JSON.stringify(updated));
-              return updated;
-            });
+    let unsubscribe = () => {};
+    try {
+      const docRef = doc(db, 'settings', 'general');
+      unsubscribe = onSnapshot(
+        docRef,
+        (docSnap) => {
+          if (docSnap.exists()) {
+            const remoteData = docSnap.data();
+            if (remoteData) {
+              setSettings((prev) => {
+                const updated = { ...prev, ...remoteData };
+                if (!updated.site_logo_url) updated.site_logo_url = DEFAULT_VA_LOGO_SVG;
+                if (updated.contact_title === 'Contact Our Concierge') updated.contact_title = 'Contact Us';
+                localStorage.setItem('va_settings', JSON.stringify(updated));
+                return updated;
+              });
+            }
           }
+        },
+        (err) => {
+          console.warn('Firestore real-time settings sync error:', err);
         }
-      } catch (e) {
-        // Static hosting fallback
-      }
-    };
-    fetchSettings();
+      );
+    } catch (e) {
+      console.warn('Firestore settings listener failed:', e);
+    }
+
+    return () => unsubscribe();
   }, []);
 
-  const updateSettings = (newSettings) => {
-    setSettings(prev => {
+  const updateSettings = async (newSettings) => {
+    setSettings((prev) => {
       const updated = { ...prev, ...newSettings };
       localStorage.setItem('va_settings', JSON.stringify(updated));
       return updated;
     });
 
-    // Try posting to backend
+    // Push to Cloud Firestore for instant real-time sync across all browsers
+    try {
+      const docRef = doc(db, 'settings', 'general');
+      await setDoc(docRef, newSettings, { merge: true });
+    } catch (e) {
+      console.warn('Firestore settings write error:', e);
+    }
+
+    // Secondary fallback API post
     fetch('/api/settings', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('va_admin_token')}`
+        Authorization: `Bearer ${localStorage.getItem('va_admin_token')}`
       },
       body: JSON.stringify({ settings: newSettings })
     }).catch(() => {});
