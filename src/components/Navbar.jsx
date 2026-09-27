@@ -85,7 +85,7 @@ export const Navbar = () => {
             </li>
             <li>
               <NavLink to="/contact" className={({ isActive }) => (isActive ? 'active' : '')}>
-                Concierge
+                Contact Us
               </NavLink>
             </li>
           </ul>
@@ -171,7 +171,7 @@ export const Navbar = () => {
             </li>
             <li>
               <NavLink to="/contact" onClick={() => setMobileOpen(false)}>
-                Concierge / Contact
+                Contact Us
               </NavLink>
             </li>
           </ul>

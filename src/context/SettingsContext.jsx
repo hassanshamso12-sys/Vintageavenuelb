@@ -28,7 +28,7 @@ const DEFAULT_SETTINGS = {
   about_title: 'The Vintage Avenue Legacy',
   about_desc1: 'Founded with a passion for preserving timeless design, Vintage Avenue curates the finest historical artifacts, mechanical watches, and rare garments from around the globe.',
   about_desc2: 'Every piece in our vault is meticulously inspected, authenticated, and restored by master artisans before joining our exclusive collection.',
-  contact_title: 'Contact Our Concierge',
+  contact_title: 'Contact Us',
   contact_address: '100 Avenue de Vintage, Suite 400, Beirut, Lebanon',
   contact_email: 'concierge@vintageavenuelb.com',
   contact_phone: '+961 70 123 456',
@@ -42,6 +42,9 @@ export const SettingsProvider = ({ children }) => {
       let parsed = saved ? { ...DEFAULT_SETTINGS, ...JSON.parse(saved) } : DEFAULT_SETTINGS;
       if (!parsed.site_logo_url) {
         parsed.site_logo_url = DEFAULT_VA_LOGO_SVG;
+      }
+      if (parsed.contact_title === 'Contact Our Concierge') {
+        parsed.contact_title = 'Contact Us';
       }
       if (parsed.announcement_text && parsed.announcement_text.includes('WORLDWIDE')) {
         parsed.announcement_text = '✨ CURATED VINTAGE & LUXURY RETAIL • INSURED EXPRESS COURIER DISPATCH ✨';

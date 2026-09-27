@@ -22,7 +22,7 @@ export const ContactPage = () => {
     <div className="container" style={{ padding: '60px 24px 100px', maxWidth: '1000px' }}>
       <div style={{ textAlign: 'center', marginBottom: '48px' }}>
         <h1 style={{ fontSize: '3rem', color: 'var(--color-gold)', marginBottom: '12px' }}>
-          {settings.contact_title || 'Contact Our Concierge'}
+          {settings.contact_title || 'Contact Us'}
         </h1>
         <p style={{ color: 'var(--color-text-secondary)', fontSize: '1.1rem' }}>
           Have questions regarding an artifact or bespoke sourcing request? We are at your service.
