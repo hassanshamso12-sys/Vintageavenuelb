@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSettings } from '../../context/SettingsContext';
+import { useSettings, DEFAULT_VA_LOGO_SVG } from '../../context/SettingsContext';
 import { useToast } from '../../components/ToastContainer';
 
 export const AdminSettingsPage = () => {
@@ -149,12 +149,12 @@ export const AdminSettingsPage = () => {
   };
 
   const handleRemoveLogo = () => {
-    if (window.confirm('Remove custom logo image and revert to font icon logo?')) {
-      updateSettings({ site_logo_url: '' });
+    if (window.confirm('Remove custom logo image and revert to default VA monogram logo?')) {
+      updateSettings({ site_logo_url: DEFAULT_VA_LOGO_SVG });
       setLogoFile(null);
       setPendingLogoDataUrl('');
       setLogoUrlInput('');
-      showToast('Reverted to default font icon logo.', 'success');
+      showToast('Reverted to default VA monogram logo.', 'success');
     }
   };
 

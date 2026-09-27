@@ -2,11 +2,18 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const SettingsContext = createContext();
 
+export const DEFAULT_VA_LOGO_SVG = `data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect width="100" height="100" rx="4" fill="#0b0d12"/>
+  <rect x="6" y="6" width="88" height="88" rx="2" fill="none" stroke="#d4af37" stroke-width="3"/>
+  <rect x="11" y="11" width="78" height="78" fill="none" stroke="#d4af37" stroke-width="1" stroke-opacity="0.5"/>
+  <text x="50" y="65" font-family="'Cinzel', 'Playfair Display', 'Times New Roman', serif" font-size="44" font-weight="700" fill="#d4af37" text-anchor="middle" letter-spacing="-2">VA</text>
+</svg>`)}`;
+
 const DEFAULT_SETTINGS = {
   brand_name: 'VINTAGE AVENUE',
   logo_icon: 'fa-gem',
   theme_palette: 'gold',
-  site_logo_url: '',
+  site_logo_url: DEFAULT_VA_LOGO_SVG,
   whish_barcode_url: '',
   announcement_text: '✨ CURATED VINTAGE & LUXURY RETAIL • INSURED EXPRESS COURIER DISPATCH ✨',
   hero_tag: '• Rare & Timeless Elegance •',
@@ -33,6 +40,9 @@ export const SettingsProvider = ({ children }) => {
     try {
       const saved = localStorage.getItem('va_settings');
       let parsed = saved ? { ...DEFAULT_SETTINGS, ...JSON.parse(saved) } : DEFAULT_SETTINGS;
+      if (!parsed.site_logo_url) {
+        parsed.site_logo_url = DEFAULT_VA_LOGO_SVG;
+      }
       if (parsed.announcement_text && parsed.announcement_text.includes('WORLDWIDE')) {
         parsed.announcement_text = '✨ CURATED VINTAGE & LUXURY RETAIL • INSURED EXPRESS COURIER DISPATCH ✨';
       }
