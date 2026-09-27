@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useToast } from '../../components/ToastContainer';
-
-const DEFAULT_PRODUCTS = [
-  { id: 1, name: "1976 Vintage Moto Leather Jacket", category: "Apparel & Clothing", subcategory: "Vintage Jackets", price: 250.00, quantity: 3, era: "1970s", condition: "Mint", sku: "APP-7601", description: "Iconic hand-distressed Italian leather motorcycle jacket." },
-  { id: 2, name: "1968 Omega Seamaster Automatic", category: "Rare Watches", subcategory: "Automatic Chronographs", price: 1850.00, quantity: 1, era: "1960s", condition: "Excellent", sku: "TIM-6802", description: "Authentic Swiss-made Omega Seamaster." },
-  { id: 3, name: "Victorian Emerald & Diamond Ring", category: "Luxury Accessories", subcategory: "Jewelry & Rings", price: 1200.00, quantity: 2, era: "Victorian", condition: "Pristine", sku: "JWL-9903", description: "Exquisite 18K gold Victorian cluster ring." },
-  { id: 4, name: "Mid-Century Brass Desk Clock", category: "Luxury Accessories", subcategory: "Collectibles", price: 320.00, quantity: 4, era: "1950s", condition: "Great", sku: "COL-5004", description: "Mid-century modern Swiss brass mechanical desk clock." }
-];
+import { syncCatalogProducts, deleteProductFromSync, normalizeCategory } from '../../utils/dataSync';
 
 export const AdminProductsPage = () => {
   const { showToast } = useToast();
@@ -20,37 +14,23 @@ export const AdminProductsPage = () => {
   }, []);
 
   const loadProducts = async () => {
-    try {
-      const res = await fetch('/api/products');
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.products && data.products.length > 0) {
-          setProducts(data.products);
-          return;
-        }
-      }
-    } catch (e) {}
-
-    const local = localStorage.getItem('va_products');
-    setProducts(local ? JSON.parse(local) : DEFAULT_PRODUCTS);
+    const list = await syncCatalogProducts();
+    setProducts(list);
   };
 
-  const handleDelete = (id, name) => {
+  const handleDelete = async (id, name) => {
     if (window.confirm(`Are you sure you want to delete product '${name}'?`)) {
-      const updated = products.filter(p => p.id !== id);
+      const updated = await deleteProductFromSync(id);
       setProducts(updated);
-      localStorage.setItem('va_products', JSON.stringify(updated));
-
-      fetch(`/api/products/${id}`, { method: 'DELETE' }).catch(() => {});
       showToast(`Product '${name}' deleted!`, 'success');
     }
   };
 
   const filtered = products.filter(p => {
-    if (categoryFilter !== 'All' && p.category !== categoryFilter) return false;
+    if (categoryFilter !== 'All' && normalizeCategory(p.category) !== normalizeCategory(categoryFilter)) return false;
     if (search.trim()) {
       const q = search.toLowerCase();
-      return p.name.toLowerCase().includes(q) || (p.sku && p.sku.toLowerCase().includes(q));
+      return (p.name && p.name.toLowerCase().includes(q)) || (p.sku && p.sku.toLowerCase().includes(q));
     }
     return true;
   });

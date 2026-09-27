@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useToast } from '../../components/ToastContainer';
+import { syncCatalogProducts, updateProductInSync } from '../../utils/dataSync';
 
 export const AdminEditProductPage = () => {
   const { id } = useParams();
@@ -22,19 +23,8 @@ export const AdminEditProductPage = () => {
 
   useEffect(() => {
     const loadProduct = async () => {
-      try {
-        const res = await fetch(`/api/products/${id}`);
-        if (res.ok) {
-          const data = await res.json();
-          if (data && data.product) {
-            populate(data.product);
-            return;
-          }
-        }
-      } catch (e) {}
-
-      const local = JSON.parse(localStorage.getItem('va_products') || '[]');
-      const found = local.find(p => String(p.id) === String(id));
+      const allProds = await syncCatalogProducts();
+      const found = allProds.find(p => String(p.id) === String(id));
       if (found) populate(found);
     };
 
@@ -79,7 +69,7 @@ export const AdminEditProductPage = () => {
     setImages(prev => prev.filter((_, i) => i !== idx));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const updatedProd = {
       id: Number(id) || id,
@@ -97,18 +87,7 @@ export const AdminEditProductPage = () => {
       images
     };
 
-    try {
-      const existing = JSON.parse(localStorage.getItem('va_products') || '[]');
-      const updatedList = existing.map(p => String(p.id) === String(id) ? updatedProd : p);
-      localStorage.setItem('va_products', JSON.stringify(updatedList));
-    } catch (err) {}
-
-    fetch(`/api/products/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updatedProd)
-    }).catch(() => {});
-
+    await updateProductInSync(id, updatedProd);
     showToast(`Product '${name}' updated successfully!`, 'success');
     navigate('/admin/products');
   };

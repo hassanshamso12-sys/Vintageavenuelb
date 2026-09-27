@@ -162,29 +162,19 @@ async function initDatabase() {
   if (catCount.count === 0) {
     const seedCategories = [
       {
-        name: 'Apparel',
+        name: 'Apparel & Clothing',
         slug: 'apparel',
-        subcategories: ['Jackets & Coats', 'Denim & Jeans', 'Dresses & Gowns', 'Knitwear & Sweaters']
+        subcategories: ['Vintage Jackets', 'Luxury Hoodies', 'Denim & Jeans', 'Knitwear & Sweaters']
       },
       {
-        name: 'Timepieces',
-        slug: 'timepieces',
-        subcategories: ['Chronographs', 'Automatic Watches', 'Pocket Watches', 'Dress Watches']
+        name: 'Rare Watches',
+        slug: 'watches',
+        subcategories: ['Automatic Chronographs', 'Gold Vintage Watches', 'Pocket Watches']
       },
       {
-        name: 'Jewelry',
-        slug: 'jewelry',
-        subcategories: ['Necklaces & Pendants', 'Rings & Bands', 'Earrings', 'Bracelets & Cuffs']
-      },
-      {
-        name: 'Accessories',
+        name: 'Luxury Accessories',
         slug: 'accessories',
-        subcategories: ['Scarves & Ties', 'Leather Goods', 'Eyewear', 'Hats & Gloves']
-      },
-      {
-        name: 'Collectibles',
-        slug: 'collectibles',
-        subcategories: ['Clocks & Instruments', 'Vinyl & Audio', 'Art & Objects', 'Barware & Smoking']
+        subcategories: ['Jewelry & Rings', 'Collectibles', 'Leather Bags', 'Scarves & Ties']
       }
     ];
 
@@ -240,79 +230,92 @@ async function initDatabase() {
   if (productCount.count === 0) {
     const sampleProducts = [
       {
-        name: '1970s Distressed Biker Leather Jacket',
-        description: 'Authentic 1970s vintage dark brown leather jacket with brass zippers and silk lining.',
-        category: 'Apparel',
-        subcategory: 'Jackets & Coats',
+        name: '1976 Vintage Moto Leather Jacket',
+        description: 'Iconic hand-distressed Italian leather motorcycle jacket with original brass zippers, silk quilted lining, and authentic 1970s patina.',
+        category: 'Apparel & Clothing',
+        subcategory: 'Vintage Jackets',
         price: 349.99,
         cost_price: 180.00,
         quantity: 3,
-        sku: 'VA-APP-1970-001',
+        sku: 'VA-APP-1976-001',
         era: '1970s',
         condition: 'Mint Vintage',
         image_url: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&auto=format&fit=crop&q=80'
       },
       {
+        name: '1968 Omega Seamaster Automatic',
+        description: 'Authentic Swiss-made Omega Seamaster with original stainless steel bracelet, pristine silver sunburst dial, and fully serviced automatic movement.',
+        category: 'Rare Watches',
+        subcategory: 'Automatic Chronographs',
+        price: 1850.00,
+        cost_price: 950.00,
+        quantity: 1,
+        sku: 'VA-TMP-1968-002',
+        era: '1960s',
+        condition: 'Excellent',
+        image_url: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80'
+      },
+      {
+        name: 'Victorian Emerald & Diamond Ring',
+        description: 'Exquisite 18K yellow gold Victorian cluster ring featuring a natural Colombian emerald surrounded by antique rose-cut diamonds.',
+        category: 'Luxury Accessories',
+        subcategory: 'Jewelry & Rings',
+        price: 1200.00,
+        cost_price: 600.00,
+        quantity: 2,
+        sku: 'VA-JWL-VIC-003',
+        era: 'Victorian',
+        condition: 'Pristine',
+        image_url: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&auto=format&fit=crop&q=80'
+      },
+      {
+        name: 'Mid-Century Brass Desk Clock',
+        description: 'Mid-century modern Swiss brass mechanical desk clock with 8-day power reserve, heavy solid brass casing, and flawless ticking mechanism.',
+        category: 'Luxury Accessories',
+        subcategory: 'Collectibles',
+        price: 320.00,
+        cost_price: 140.00,
+        quantity: 4,
+        sku: 'VA-COL-1960-004',
+        era: '1950s',
+        condition: 'Great',
+        image_url: 'https://images.unsplash.com/photo-1563861826100-9cb868fdbe1c?w=600&auto=format&fit=crop&q=80'
+      },
+      {
         name: 'Victorian 18K Gold Pearl Necklace',
         description: 'Exquisite late 19th-century Victorian hand-strung freshwater pearl necklace with 18K gold clasp.',
-        category: 'Jewelry',
-        subcategory: 'Necklaces & Pendants',
+        category: 'Luxury Accessories',
+        subcategory: 'Jewelry & Rings',
         price: 890.00,
         cost_price: 450.00,
         quantity: 1,
-        sku: 'VA-JWL-VIC-002',
+        sku: 'VA-JWL-VIC-005',
         era: 'Victorian',
         condition: 'Restored Excellent',
         image_url: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600&auto=format&fit=crop&q=80'
       },
       {
-        name: '1960s Mid-Century Brass Chrono Table Clock',
-        description: 'Rare Swiss-movement mid-century brass desktop clock with sunburst motif.',
-        category: 'Collectibles',
-        subcategory: 'Clocks & Instruments',
-        price: 275.50,
-        cost_price: 110.00,
-        quantity: 4,
-        sku: 'VA-COL-1960-003',
-        era: '1960s',
-        condition: 'Original Working Condition',
-        image_url: 'https://images.unsplash.com/photo-1563861826100-9cb868fdbe1c?w=600&auto=format&fit=crop&q=80'
-      },
-      {
-        name: '1980s Automatic Heritage Chronograph Watch',
-        description: 'Collector vintage automatic stainless steel chronograph watch with genuine leather strap.',
-        category: 'Timepieces',
-        subcategory: 'Chronographs',
-        price: 1250.00,
-        cost_price: 680.00,
-        quantity: 2,
-        sku: 'VA-TMP-1980-004',
-        era: '1980s',
-        condition: 'Serviced Pristine',
-        image_url: 'https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=600&auto=format&fit=crop&q=80'
-      },
-      {
-        name: 'Vintage Silk Paisley Pocket Square & Scarf',
+        name: 'Vintage Silk Paisley Scarf',
         description: 'Italian 100% pure Mulberry silk scarf with intricate hand-rolled edges.',
-        category: 'Accessories',
+        category: 'Luxury Accessories',
         subcategory: 'Scarves & Ties',
         price: 115.00,
         cost_price: 40.00,
         quantity: 8,
-        sku: 'VA-ACC-1990-005',
+        sku: 'VA-ACC-1990-006',
         era: '1990s',
         condition: 'Unused Vintage NOS',
         image_url: 'https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=600&auto=format&fit=crop&q=80'
       },
       {
-        name: 'Y2K Acid Wash Oversized Denim Jacket',
+        name: 'Y2K Acid Wash Denim Jacket',
         description: 'Classic late 90s/early 2000s heavyweight acid wash denim jacket with silver buttons.',
-        category: 'Apparel',
+        category: 'Apparel & Clothing',
         subcategory: 'Denim & Jeans',
         price: 185.00,
         cost_price: 75.00,
         quantity: 5,
-        sku: 'VA-APP-Y2K-006',
+        sku: 'VA-APP-Y2K-007',
         era: 'Y2K',
         condition: 'Very Good',
         image_url: 'https://images.unsplash.com/photo-1543076447-215ad9ba6923?w=600&auto=format&fit=crop&q=80'

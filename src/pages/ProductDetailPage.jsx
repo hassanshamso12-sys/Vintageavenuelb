@@ -2,75 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../components/ToastContainer';
-
-const DEFAULT_PRODUCTS = [
-  {
-    id: 1,
-    name: "1976 Vintage Moto Leather Jacket",
-    category: "Apparel & Clothing",
-    subcategory: "Vintage Jackets",
-    price: 250.00,
-    quantity: 3,
-    era: "1970s",
-    condition: "Mint",
-    sku: "APP-7601",
-    description: "Iconic hand-distressed Italian leather motorcycle jacket with original brass zippers, silk quilted lining, and authentic 1970s patina.",
-    image_url: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&auto=format&fit=crop&q=60",
-    images: [
-      "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&auto=format&fit=crop&q=60",
-      "https://images.unsplash.com/photo-1521223890158-f9f7c3d5d504?w=600&auto=format&fit=crop&q=60"
-    ]
-  },
-  {
-    id: 2,
-    name: "1968 Omega Seamaster Automatic",
-    category: "Rare Watches",
-    subcategory: "Automatic Chronographs",
-    price: 1850.00,
-    quantity: 1,
-    era: "1960s",
-    condition: "Excellent",
-    sku: "TIM-6802",
-    description: "Authentic Swiss-made Omega Seamaster with original stainless steel bracelet, pristine silver sunburst dial, and fully serviced automatic movement.",
-    image_url: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=60",
-    images: [
-      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=60",
-      "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&auto=format&fit=crop&q=60"
-    ]
-  },
-  {
-    id: 3,
-    name: "Victorian Emerald & Diamond Ring",
-    category: "Luxury Accessories",
-    subcategory: "Jewelry & Rings",
-    price: 1200.00,
-    quantity: 2,
-    era: "Victorian",
-    condition: "Pristine",
-    sku: "JWL-9903",
-    description: "Exquisite 18K yellow gold Victorian cluster ring featuring a natural Colombian emerald surrounded by antique rose-cut diamonds.",
-    image_url: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&auto=format&fit=crop&q=60",
-    images: [
-      "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&auto=format&fit=crop&q=60"
-    ]
-  },
-  {
-    id: 4,
-    name: "Mid-Century Brass Desk Clock",
-    category: "Luxury Accessories",
-    subcategory: "Collectibles",
-    price: 320.00,
-    quantity: 4,
-    era: "1950s",
-    condition: "Great",
-    sku: "COL-5004",
-    description: "Mid-century modern Swiss brass mechanical desk clock with 8-day power reserve, heavy solid brass casing, and flawless ticking mechanism.",
-    image_url: "https://images.unsplash.com/photo-1563861826100-9cb868fdbe1c?w=600&auto=format&fit=crop&q=60",
-    images: [
-      "https://images.unsplash.com/photo-1563861826100-9cb868fdbe1c?w=600&auto=format&fit=crop&q=60"
-    ]
-  }
-];
+import { syncCatalogProducts } from '../utils/dataSync';
 
 export const ProductDetailPage = () => {
   const { id } = useParams();
@@ -85,25 +17,18 @@ export const ProductDetailPage = () => {
   const [isMagnified, setIsMagnified] = useState(false);
 
   useEffect(() => {
-    let allProds = DEFAULT_PRODUCTS;
-    try {
-      const saved = localStorage.getItem('va_products');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed && parsed.length > 0) {
-          allProds = parsed;
-        }
+    const loadData = async () => {
+      const allProds = await syncCatalogProducts();
+      const found = allProds.find(p => String(p.id) === String(id));
+      if (found) {
+        setProduct(found);
+        const initialPhoto = (found.images && found.images.length > 0) 
+          ? found.images[0] 
+          : (found.image_url || '/uploads/placeholder.jpg');
+        setSelectedImg(initialPhoto);
       }
-    } catch (e) {}
-
-    const found = allProds.find(p => String(p.id) === String(id));
-    if (found) {
-      setProduct(found);
-      const initialPhoto = (found.images && found.images.length > 0) 
-        ? found.images[0] 
-        : (found.image_url || '/uploads/placeholder.jpg');
-      setSelectedImg(initialPhoto);
-    }
+    };
+    loadData();
   }, [id]);
 
   if (!product) {

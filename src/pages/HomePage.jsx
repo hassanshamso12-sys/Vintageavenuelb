@@ -2,13 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSettings } from '../context/SettingsContext';
 import { useCart } from '../context/CartContext';
-
-const DEFAULT_PRODUCTS = [
-  { id: 1, name: "1976 Vintage Moto Leather Jacket", category: "Apparel & Clothing", subcategory: "Vintage Jackets", price: 250.00, quantity: 3, era: "1970s", condition: "Mint", sku: "APP-7601", description: "Iconic hand-distressed Italian leather motorcycle jacket with original brass zippers.", image_url: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&auto=format&fit=crop&q=60" },
-  { id: 2, name: "1968 Omega Seamaster Automatic", category: "Rare Watches", subcategory: "Automatic Chronographs", price: 1850.00, quantity: 1, era: "1960s", condition: "Excellent", sku: "TIM-6802", description: "Authentic Swiss-made Omega Seamaster with original stainless steel bracelet.", image_url: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=60" },
-  { id: 3, name: "Victorian Emerald & Diamond Ring", category: "Luxury Accessories", subcategory: "Jewelry & Rings", price: 1200.00, quantity: 2, era: "Victorian", condition: "Pristine", sku: "JWL-9903", description: "Exquisite 18K gold Victorian cluster ring featuring a natural Colombian emerald.", image_url: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&auto=format&fit=crop&q=60" },
-  { id: 4, name: "Mid-Century Brass Desk Clock", category: "Luxury Accessories", subcategory: "Collectibles", price: 320.00, quantity: 4, era: "1950s", condition: "Great", sku: "COL-5004", description: "Mid-century modern Swiss brass mechanical desk clock with 8-day power reserve.", image_url: "https://images.unsplash.com/photo-1563861826100-9cb868fdbe1c?w=600&auto=format&fit=crop&q=60" }
-];
+import { syncCatalogProducts } from '../utils/dataSync';
 
 export const HomePage = () => {
   const { settings } = useSettings();
@@ -17,19 +11,8 @@ export const HomePage = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      try {
-        const res = await fetch('/api/products');
-        if (res.ok) {
-          const data = await res.json();
-          if (data && data.products && data.products.length > 0) {
-            setProducts(data.products);
-            return;
-          }
-        }
-      } catch (e) {}
-
-      const local = localStorage.getItem('va_products');
-      setProducts(local ? JSON.parse(local) : DEFAULT_PRODUCTS);
+      const prodList = await syncCatalogProducts();
+      setProducts(prodList);
     };
     fetchProducts();
   }, []);

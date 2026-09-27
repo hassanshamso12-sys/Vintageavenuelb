@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../../components/ToastContainer';
+import { saveProductToSync } from '../../utils/dataSync';
 
 export const AdminAddProductPage = () => {
   const { showToast } = useToast();
@@ -48,7 +49,7 @@ export const AdminAddProductPage = () => {
     setImages(prev => prev.filter((_, i) => i !== idx));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newProduct = {
       id: Date.now(),
@@ -66,17 +67,7 @@ export const AdminAddProductPage = () => {
       images: images.length > 0 ? images : ['https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&auto=format&fit=crop&q=60']
     };
 
-    try {
-      const existing = JSON.parse(localStorage.getItem('va_products') || '[]');
-      localStorage.setItem('va_products', JSON.stringify([newProduct, ...existing]));
-    } catch (err) {}
-
-    fetch('/api/products', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newProduct)
-    }).catch(() => {});
-
+    await saveProductToSync(newProduct);
     showToast(`Product '${name}' created successfully!`, 'success');
     navigate('/admin/products');
   };

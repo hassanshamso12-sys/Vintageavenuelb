@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useToast } from '../../components/ToastContainer';
-
-const DEFAULT_CATEGORIES = [
-  { id: 'cat-1', name: 'Apparel & Clothing', slug: 'apparel', subcategories: [{ id: 'sub-1', name: 'Vintage Jackets' }, { id: 'sub-2', name: 'Luxury Hoodies' }, { id: 'sub-3', name: 'Retro Shirts' }] },
-  { id: 'cat-2', name: 'Rare Watches', slug: 'watches', subcategories: [{ id: 'sub-4', name: 'Automatic Chronographs' }, { id: 'sub-5', name: 'Gold Vintage Watches' }] },
-  { id: 'cat-3', name: 'Luxury Accessories', slug: 'accessories', subcategories: [{ id: 'sub-6', name: 'Leather Bags' }, { id: 'sub-7', name: 'Jewelry & Rings' }, { id: 'sub-8', name: 'Collectibles' }] }
-];
+import { syncCatalogCategories } from '../../utils/dataSync';
 
 export const AdminCategoriesPage = () => {
   const { showToast } = useToast();
@@ -22,19 +17,8 @@ export const AdminCategoriesPage = () => {
   }, []);
 
   const loadCategories = async () => {
-    try {
-      const res = await fetch('/api/categories');
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.categories && data.categories.length > 0) {
-          setCategories(data.categories);
-          return;
-        }
-      }
-    } catch (e) {}
-
-    const saved = localStorage.getItem('va_categories');
-    setCategories(saved ? JSON.parse(saved) : DEFAULT_CATEGORIES);
+    const list = await syncCatalogCategories();
+    setCategories(list);
   };
 
   const saveCategoriesToStorage = (newCats) => {
